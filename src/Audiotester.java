@@ -13,7 +13,7 @@ public class Audiotester extends JPanel implements Runnable {
 	Audiotester() throws Exception {
 		
 		ais = AudioSystem.getAudioInputStream(new File(file = "sun.wav"));
-		pos = 0; window = 1000;
+		pos = 0; window = 5000;
 		
 		int len = (int)ais.getFrameLength();
 		int sze = (int)ais.getFormat().getFrameSize();
@@ -30,7 +30,7 @@ public class Audiotester extends JPanel implements Runnable {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		for(int i = 0; i < window; i++) {
-			g.drawLine(i, arr[(pos+i)%arr.length]/500+150, i+1, arr[(pos+i+1)%arr.length]/500+150);
+			g.drawLine(i/5, arr[(pos+i)%arr.length]/500+150, (i+1)/5, arr[(pos+i+1)%arr.length]/500+150);
 		}
 		g.drawString(Integer.toString(pos), 10, 10);
 	}
