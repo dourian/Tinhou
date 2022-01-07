@@ -6,31 +6,19 @@ import javax.sound.sampled.*;
 
 public class Audiotester extends JPanel implements Runnable {
 	int pos, window;
-	short arr[];
-	AudioInputStream ais;
-	String file;
+	SoundProcessor sp;
 	
 	Audiotester() throws Exception {
 		
-		ais = AudioSystem.getAudioInputStream(new File(file = "sun.wav"));
 		pos = 0; window = 5000;
 		
-		int len = (int)ais.getFrameLength();
-		int sze = (int)ais.getFormat().getFrameSize();
-		System.out.println(len);
-		byte[] barr = new byte[len*sze];
-		ais.read(barr);
-		
-		arr = new short[len];
-		for(int i = 0; i < len*sze;i++) {
-			arr[i/sze] += barr[i]<<(i%2==1?8:0);
-		}
+		sp = new SoundProcessor("sun.wav");
 	}
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		for(int i = 0; i < window; i++) {
-			g.drawLine(i/5, arr[(pos+i)%arr.length]/500+150, (i+1)/5, arr[(pos+i+1)%arr.length]/500+150);
+			g.drawLine(i/5, sp.get(0,(pos+i)%sp.sze())/500+150, (i+1)/5, sp.get(0,(pos+i+1)%sp.sze())/500+150);
 		}
 		g.drawString(Integer.toString(pos), 10, 10);
 	}
@@ -53,12 +41,9 @@ public class Audiotester extends JPanel implements Runnable {
 	@Override
 	public void run() {
 		try {
-			ais = AudioSystem.getAudioInputStream(new File(file));
-			Clip play = AudioSystem.getClip();
-			play.open(ais);
-			play.start();
-			while(pos < arr.length) {
-				pos = play.getFramePosition();
+			sp.play();
+			while(pos < sp.sze()) {
+				pos = sp.audioPos();
 				repaint();
 				Thread.sleep(10);
 			} 
