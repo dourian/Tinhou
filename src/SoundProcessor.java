@@ -13,36 +13,40 @@ public class SoundProcessor {
 		
 		try {
 			ais = AudioSystem.getAudioInputStream(new File(fileName));
+			
 			audio = AudioSystem.getClip();
 			audio.open(ais);
+			af = ais.getFormat();
+			
+			ais = AudioSystem.getAudioInputStream(new File(fileName));
+			
+			data = new short[af.getChannels()][(int)(ais.getFrameLength())];
+			byte[] arr = new byte[(int)(ais.getFrameLength()*af.getFrameSize())];
+			ais.read(arr);
+			
+			for(int i = 0; i < arr.length; i++) {
+				if(i%af.getFrameSize()/2==1 && Math.abs(arr[i])>10) {
+					//System.out.println();
+				}
+				data[
+				     i%af.getFrameSize()/2 //channel
+				     ]
+				    [
+				     i/af.getFrameSize() //position
+				     ] += arr[i]<<(i%(af.getSampleSizeInBits()/8)*8);
+			}
+			
+			ais.close();
+			
 		} catch(UnsupportedAudioFileException | LineUnavailableException e) {
 			e.printStackTrace();
 			return;
 		}
-		
-		af = ais.getFormat();
-		data = new short[af.getChannels()][(int)(ais.getFrameLength()/af.getChannels())];
-		
-		try {
-			ais = AudioSystem.getAudioInputStream(new File(fileName));
-		} catch(UnsupportedAudioFileException e) {
-			e.printStackTrace();
-			return;
-		}
-
-		byte[] arr = new byte[(int)(ais.getFrameLength()*af.getFrameSize())];
-		ais.read(arr);
-		
-		for(int i = 0, channel = 0; i < arr.length; i++) {
-			data[channel][i/data.length/af.getFrameSize()] += arr[i]<<(i%af.getFrameSize()*8);
-			if(i%af.getFrameSize() == af.getFrameSize()-1) channel= (channel+1)%data.length;
-		}
-		
-		ais.close();
 	}
 	short get(int x, int y) {return data[x][y];}
 	int sze() {return data[0].length;}
 	
 	void play() {audio.start();}
 	int audioPos() {return audio.getFramePosition();}
+	int channels() {return af.getChannels();}
 }

@@ -12,14 +12,17 @@ public class Audiotester extends JPanel implements Runnable {
 		
 		pos = 0; window = 5000;
 		
-		sp = new SoundProcessor("sun.wav");
+		sp = new SoundProcessor("test.wav");
 	}
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		for(int i = 0; i < window; i++) {
-			g.drawLine(i/5, sp.get(0,(pos+i)%sp.sze())/500+150, (i+1)/5, sp.get(0,(pos+i+1)%sp.sze())/500+150);
+		for(int c = 0; c < sp.channels(); c++) {
+			for(int i = 0; i < window; i++) {
+				g.drawLine(i/5, sp.get(c,(pos+i)%sp.sze())/500+50 + 100*c, (i+1)/5, sp.get(c,(pos+i+1)%sp.sze())/500+50 + 100*c);
+			}
 		}
+		
 		g.drawString(Integer.toString(pos), 10, 10);
 	}
 	
