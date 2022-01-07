@@ -4,10 +4,10 @@ import java.awt.Image;
  * @author max13
  * entity class. stores entity data such as position, size, hit detection information, icon
  */
-public class Entity {
-	private Complex pos, vel;
-	private double rad;
-	private Image icon;
+public abstract class Entity {
+	protected Complex pos, vel;
+	protected double rad;
+	protected Image icon;
 	Entity(Complex position, Complex velocity, double radius, Image i) {
 		pos = position; vel = velocity; rad = radius; icon = i;
 	}
@@ -18,4 +18,14 @@ public class Entity {
 	public void move() {pos = pos.plus(vel);}
 	
 	public boolean Collides(Entity c) {return pos.minus(c.pos).abs()<rad+c.rad;}
+	
+	/**
+	 * cycle function that engine calls every game tick to update entity
+	 * @param f
+	 * elapsed time
+	 * @return
+	 * true if entity is allowed to exist
+	 * false if entity should be deleted
+	 */
+	public abstract boolean cycle(float f);
 }
