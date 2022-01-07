@@ -1,11 +1,14 @@
 import java.util.Objects;
-
+/**
+ * @author max13
+ * basic complex number that supports arithmetic operations. 
+ */
 public class Complex {
 	private double re, im;
 	private final double EPS = 1e-6;
 	
 	public Complex(double real, double imag) {re = real; im = imag;}
-	public Complex polar(double arg, double mag) {return new Complex(Math.cos(arg)*mag, Math.sin(arg)*mag);}
+	public static Complex polar(double arg, double mag) {return new Complex(Math.cos(arg)*mag, Math.sin(arg)*mag);}
 	
 	public double abs() {return Math.hypot(re, im);}
 	public double arg() {return Math.atan(im/re);}

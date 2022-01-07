@@ -25,9 +25,6 @@ public class SoundProcessor {
 			ais.read(arr);
 			
 			for(int i = 0; i < arr.length; i++) {
-				if(i%af.getFrameSize()/2==1 && Math.abs(arr[i])>10) {
-					//System.out.println();
-				}
 				data[
 				     i%af.getFrameSize()/2 //channel
 				     ]
