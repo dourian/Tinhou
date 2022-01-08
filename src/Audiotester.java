@@ -21,8 +21,9 @@ public class Audiotester extends JPanel implements Runnable {
 			for(int i = 0; i < window; i++) {
 				g.drawLine(i/5, sp.get(c,(pos+i)%sp.sze())/500+50 + 100*c, (i+1)/5, sp.get(c,(pos+i+1)%sp.sze())/500+50 + 100*c);
 			}
-			if(pos+1024<sp.sze()) {
-				float[] arr = DFT.compute(sp.getsubdata(c, pos, pos+512));
+			if(pos+512<sp.sze()) {
+				short[] sbdata = sp.getsubdata(c, pos, pos+512);
+				float[] arr = DFT.compute(sbdata);
 				for(int i = 0; i+1 < 256; i++) {
 					g.drawLine((int)(100*Math.log(i)), 300+200*c+-(int)arr[i]/10000, (int)(100*Math.log(i+1)), 300+200*c+-(int)arr[(i+1)%256]/10000);
 				}
