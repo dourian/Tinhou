@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.Arrays;
+
 import javax.sound.sampled.*;
 /**
  * @author max13
@@ -41,9 +43,8 @@ public class SoundProcessor {
 		}
 	}
 	
-	
-	
 	short get(int x, int y) {return data[x][y];}
+	short[] getsubdata(int x, int a, int b) {return Arrays.copyOfRange(data[x],a,b);}
 	int sze() {return data[0].length;}
 	
 	void play() {audio.start();}

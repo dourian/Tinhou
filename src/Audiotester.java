@@ -12,7 +12,7 @@ public class Audiotester extends JPanel implements Runnable {
 		
 		pos = 0; window = 5000;
 		
-		sp = new SoundProcessor("test.wav");
+		sp = new SoundProcessor("sun.wav");
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -20,6 +20,12 @@ public class Audiotester extends JPanel implements Runnable {
 		for(int c = 0; c < sp.channels(); c++) {
 			for(int i = 0; i < window; i++) {
 				g.drawLine(i/5, sp.get(c,(pos+i)%sp.sze())/500+50 + 100*c, (i+1)/5, sp.get(c,(pos+i+1)%sp.sze())/500+50 + 100*c);
+			}
+			if(pos+1024<sp.sze()) {
+				float[] arr = DFT.compute(sp.getsubdata(c, pos, pos+512));
+				for(int i = 0; i+1 < 256; i++) {
+					g.drawLine((int)(100*Math.log(i)), 300+200*c+-(int)arr[i]/10000, (int)(100*Math.log(i+1)), 300+200*c+-(int)arr[(i+1)%256]/10000);
+				}
 			}
 		}
 		
@@ -31,7 +37,7 @@ public class Audiotester extends JPanel implements Runnable {
 		Audiotester AT = new Audiotester();
 		
 		JFrame frame = new JFrame();
-		frame.setPreferredSize(new Dimension(1000, 300));
+		frame.setPreferredSize(new Dimension(1000, 700));
 		frame.add(AT);
 		frame.pack();
 		frame.setVisible(true);
