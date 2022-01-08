@@ -40,6 +40,9 @@ public class SoundProcessor {
 			return;
 		}
 	}
+	
+	
+	
 	short get(int x, int y) {return data[x][y];}
 	int sze() {return data[0].length;}
 	
