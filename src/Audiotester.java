@@ -12,7 +12,7 @@ public class Audiotester extends JPanel implements Runnable {
 		
 		pos = 0; window = 5000;
 		
-		sp = new SoundProcessor("sun.wav");
+		sp = new SoundProcessor("test.wav");
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -23,10 +23,13 @@ public class Audiotester extends JPanel implements Runnable {
 			}
 			if(pos+512<sp.sze()) {
 				short[] sbdata = sp.getsubdata(c, pos, pos+512);
-				float[] arr = DFT.compute(sbdata);
+				float[] arr;
+				arr = DFT.fFFT(sbdata);
+				g.setColor(Color.RED);
 				for(int i = 0; i+1 < 256; i++) {
 					g.drawLine((int)(100*Math.log(i)), 300+200*c+-(int)arr[i]/10000, (int)(100*Math.log(i+1)), 300+200*c+-(int)arr[(i+1)%256]/10000);
 				}
+				g.setColor(Color.BLACK);
 			}
 		}
 		
