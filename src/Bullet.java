@@ -33,4 +33,6 @@ public class Bullet extends Entity {
 		pos = pos.plus(vel.mult(f));
 		return timetolive > 0;
 	}
+	
+	public double angle() { return vel.arg(); }
 }
