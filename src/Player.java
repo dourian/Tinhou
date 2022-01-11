@@ -9,7 +9,7 @@ public abstract class Player extends Entity {
 	private int HP, speed;
 	Player(Complex position) throws IOException {
 		super(position, new Complex(0, 0), 10, ImageIO.read(new File("character.png")));
-		HP = 10; speed = 300;
+		HP = 1; speed = 300;
 	}
 	public boolean cycle(float f) {
 		Complex rvel = new Complex(vel.real(),vel.imag());
@@ -18,6 +18,7 @@ public abstract class Player extends Entity {
 		return HP > 0;
 	}
 	public int getHP() {return HP;}
+	public void hit(int val) {HP -= val;}
 }
 
 class PlayerKeyboard extends Player implements KeyListener {

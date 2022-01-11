@@ -5,6 +5,7 @@ public class Main extends JPanel implements Runnable {
 	Game game;
 	Main() {
 		game = new Game(700, 700, false);
+		game.addEntity(new Bullet(new Complex(100, 100), new Complex(10, 10), 1));
 		addKeyListener((KeyListener) game.getListener());
 	}
 	public void paintComponent(Graphics g) {

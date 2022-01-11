@@ -19,7 +19,7 @@ public abstract class Entity {
 	public void correctPos(int H, int W) {
 		pos = new Complex(Math.min(W, Math.max(0, pos.real())),Math.min(H, Math.max(0, pos.imag())));
 	}
-	public boolean Collides(Entity c) {return pos.minus(c.pos).abs()<rad+c.rad;}
+	public boolean collides(Entity c) {return pos.minus(c.pos).abs()<rad+c.rad;}
 	
 	/**
 	 * cycle function that engine calls every game tick to update entity
@@ -32,5 +32,6 @@ public abstract class Entity {
 	public abstract boolean cycle(float f);
 	public void repaint(Graphics g) {
 		g.drawImage(icon, (int)(pos.real()-rad),(int)(pos.imag()-rad), null);
+		g.drawOval((int)(pos.real()-rad), (int)(pos.imag()-rad), (int)(2*rad), (int)(2*rad)); //DEBUG
 	}
 }

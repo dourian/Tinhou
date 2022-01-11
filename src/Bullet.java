@@ -25,7 +25,7 @@ public class Bullet extends Entity {
 	private double timetolive;
 	Bullet(Complex position, Complex velocity, int type) {
 		super(position, velocity, radii[type], icons[type]);
-		timetolive = 100;
+		timetolive = 3;
 	}
 	
 	public boolean cycle(float f) {

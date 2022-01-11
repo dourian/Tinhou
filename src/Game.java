@@ -22,14 +22,16 @@ public class Game {
 		if(previousCycle == -1) previousCycle = System.currentTimeMillis()-1;
 		float f = (System.currentTimeMillis()-previousCycle)/1000.0f;
 		previousCycle=System.currentTimeMillis();
+		ArrayList<Entity> newlist = new ArrayList<Entity>();
 		for(Entity e: list) {
-			e.cycle(f);
+			if(e.cycle(f)) newlist.add(e);
 			e.correctPos(height, width);
 		}
-		//TODO collision and stuff
+		list = newlist;
+		for(Entity e: list) if(e != player && e.collides(player)) player.hit(1);
 	}
 	public void repaint(Graphics g) {
 		for(Entity e: list) e.repaint(g);
-		//TODO draw background and music visualizer
+		//TODO draw background and music visualizer and ui and stuff
 	}
 }
