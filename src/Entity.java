@@ -17,7 +17,7 @@ public abstract class Entity {
 	public void setPos(Complex c) {pos = c;}
 	public void setVel(Complex c) {vel = c;}
 	public void correctPos(int H, int W) {
-		pos = new Complex(Math.min(W, Math.max(0, pos.real())),Math.min(H, Math.max(0, pos.imag())));
+		pos = new Complex(Math.min(W-2*rad, Math.max(rad, pos.real())),Math.min(H-2*rad, Math.max(rad, pos.imag())));
 	}
 	public boolean collides(Entity c) {return pos.minus(c.pos).abs()<rad+c.rad;}
 	

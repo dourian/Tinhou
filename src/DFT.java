@@ -6,13 +6,17 @@
  */
 public class DFT {
 	
-	public static float[] compute(short[] arr) { //naive N^2 DFT for answer checking
-		float[] ret = new float[arr.length/2];
+	public static Complex[] compute(short[] arr) { //naive N^2 DFT for answer checking
+		Complex[] ret = new Complex[arr.length/2];
 		for(int i = 0; i < arr.length/2; i++) ret[i] = compute(arr, i);
 		return ret;
 	}
 	
 	public static Complex[] FFT(short[] arr) { //NlogF DFT computation. assumes arr is length 2^k
+		if(Integer.bitCount(arr.length) > 1) {
+			System.out.println("Error FFT length: " + arr.length);
+			return compute(arr);
+		}
 		Complex[] ret = new Complex[arr.length], eret, oret; ret[0] = new Complex(arr[0], 0); 
 		if(arr.length == 1) return ret;
 		short[][] sub = new short[2][arr.length/2];
@@ -32,9 +36,9 @@ public class DFT {
 		return ret;
 	}
 	
-	public static float compute(short[] arr, double k) {
+	public static Complex compute(short[] arr, double k) {
 		Complex c = new Complex(0, 0);
 		for(int n = 0; n < arr.length; n++) c = c.plus(Complex.polar(2*Math.PI*k*n/arr.length, arr[n]));
-		return (float)c.abs();
+		return c;
 	}
 }
