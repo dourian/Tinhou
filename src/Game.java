@@ -43,7 +43,8 @@ public class Game {
 		//TODO draw background and music visualizer and ui and stuff
 		int window = 4096;
 		if(sp.audioPos()+window < sp.sze()) {
-			float[] data = DFT.fFFT(sp.getsubdata(0, sp.audioPos(), sp.audioPos()+window));
+			int pos = sp.audioPos();
+			float[] data = DFT.fFFT(sp.getsubdata(0, pos, pos+window));
 			double coef = width/Math.log(window);
 			for(int i = 0; i+1 < window; i++) {
 				int lg = (int)(Math.log(i)*coef);
