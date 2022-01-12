@@ -23,6 +23,9 @@ public class Main extends JPanel implements Runnable {
 	}
 	@Override
 	public void run() {
+		
+		
+		
 		game.playAudio();
 		while(true) {
 			game.cycle();
