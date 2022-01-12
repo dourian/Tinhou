@@ -4,7 +4,7 @@ import javax.swing.*;
 public class Main extends JPanel implements Runnable {
 	Game game;
 	Main() {
-		game = new Game(700, 1000, false, "sun.wav");
+		game = new Game(700, 1000, false, "keshi.wav");
 		addKeyListener((KeyListener) game.getListener());
 	}
 	public void paintComponent(Graphics g) {
