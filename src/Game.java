@@ -49,7 +49,7 @@ public class Game {
 			for(int i = 0; i+1 < window; i++) {
 				int lg = (int)(Math.log(i)*coef);
 				int lgp1 = (int)(Math.log(i+1)*coef);
-				g.drawLine(lg, height-(int)data[i]/100000-50, lgp1, height-(int)data[i+1]/100000-50);
+				g.drawLine(lg, height-(int)(data[i]/300000*Math.log(i))-50, lgp1, height-(int)(data[i+1]/300000*Math.log(i+1))-50);
 			}
 		}
 	}
