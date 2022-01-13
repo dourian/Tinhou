@@ -23,11 +23,9 @@ public class Game {
 	public Player getListener() { return player; }
 	public void playAudio() {sp.play();}
 	public void addEntity(Entity e) { list.add(e); }
-	float fps;
 	public void cycle() {
 		if(previousCycle == -1) previousCycle = System.currentTimeMillis()-1;
 		float f = (System.currentTimeMillis()-previousCycle)/1000.0f;
-		fps = 1/f;
 		previousCycle=System.currentTimeMillis();
 		ArrayList<Entity> newlist = new ArrayList<Entity>();
 		for(Entity e: list) {
@@ -38,7 +36,6 @@ public class Game {
 		for(Entity e: list) if(e != player && e.collides(player)) player.hit(1);
 	}
 	public void repaint(Graphics g) {
-		g.drawString(Double.toString(fps),10,10);
 		for(Entity e: list) e.repaint(g);
 		//TODO draw background and music visualizer and ui and stuff
 		int window = 4096;
