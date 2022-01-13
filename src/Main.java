@@ -165,7 +165,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println("esc");
+//		System.out.println("esc");
 		if (e.getKeyCode()==KeyEvent.VK_ESCAPE) {
 			if (navigation.size()> 1 && gameState!=PLAY) {
 				navigation.pop();
