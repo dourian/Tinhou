@@ -1,26 +1,60 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-public class Main extends JPanel implements Runnable {
+
+
+public class Main extends JPanel implements Runnable, MouseListener {
 	Game game;
+	
+	static JPanel panel;
+	static JFrame frame;
+	Image [] images;
+	
+	
 	Main() {
 		game = new Game(700, 1000, false, "keshi 2.wav");
 		addKeyListener((KeyListener) game.getListener());
+		
+		images = new Image [1];
+		images[0] = Toolkit.getDefaultToolkit().getImage("openingscreen.png");
+		
+		addMouseListener (this);
+		
 	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		game.repaint(g);
+		g.drawImage(images[0],0, 0, 1000, 700,this);
+//		game.repaint(g);
 	}
 	public static void main(String args[]) {
-		JFrame frame = new JFrame ();
+		frame = new JFrame ();
 		frame.setPreferredSize(new Dimension(1000, 700));
-		Main panel = new Main();
+		panel = new Main();
 		frame.add (panel);
 		frame.pack ();
 		frame.setVisible (true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		new Thread(panel).start();
+//		new Thread(panel).start();
 	}
+	
+	public int buttonTracker(int x, int y) {
+		if (x>300 && x<700) {
+			if (y>325 && y<425) {
+				return 1;
+			}
+			else if (y>450 && y<525) {
+				return 2;
+			}
+			else if (y>550 && y<625) {
+				return 3;
+			}
+		}
+		
+		return -1;
+	}
+	
+	
+	
 	@Override
 	public void run() {
 		playGame();
@@ -33,5 +67,36 @@ public class Main extends JPanel implements Runnable {
 			repaint();
 			requestFocus();
 		}
+	}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		/*
+		 * 1: PLAY
+		 * 2: LEADERBOARD
+		 * 3: SETTINGS
+		 */
+		
+		System.out.println(buttonTracker(e.getX(), e.getY()));
+		
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
