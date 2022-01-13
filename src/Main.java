@@ -9,6 +9,7 @@ public class Main extends JPanel implements Runnable, MouseListener {
 	static JPanel panel;
 	static JFrame frame;
 	Image [] images;
+	Graphics g;
 	
 	
 	Main() {
@@ -76,8 +77,9 @@ public class Main extends JPanel implements Runnable, MouseListener {
 		 * 3: SETTINGS
 		 */
 		
-		System.out.println(buttonTracker(e.getX(), e.getY()));
-		
+		if (buttonTracker(e.getX(), e.getY())==1) {
+			g.drawRect(0, 0, 1000, 700);
+		}
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
