@@ -9,8 +9,8 @@ public class Main extends JPanel implements Runnable, MouseListener {
 	static JPanel panel;
 	static JFrame frame;
 	Image [] images;
-	Graphics g;
 	
+	int currentScreen = 0;
 	
 	Main() {
 		game = new Game(700, 1000, false, "keshi 2.wav");
@@ -22,11 +22,17 @@ public class Main extends JPanel implements Runnable, MouseListener {
 		addMouseListener (this);
 		
 	}
+	
+	public void clearBoard(Graphics g) {
+		g.fillRect(0, 0, 1000, 700);
+	}
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawImage(images[0],0, 0, 1000, 700,this);
-//		game.repaint(g);
+		if (currentScreen==0)g.drawImage(images[0],0, 0, 1000, 700,this);
+		else if (currentScreen==1)game.repaint(g);
 	}
+	
 	public static void main(String args[]) {
 		frame = new JFrame ();
 		frame.setPreferredSize(new Dimension(1000, 700));
@@ -35,7 +41,7 @@ public class Main extends JPanel implements Runnable, MouseListener {
 		frame.pack ();
 		frame.setVisible (true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		new Thread(panel).start();
+		
 	}
 	
 	public int buttonTracker(int x, int y) {
@@ -53,8 +59,6 @@ public class Main extends JPanel implements Runnable, MouseListener {
 		
 		return -1;
 	}
-	
-	
 	
 	@Override
 	public void run() {
@@ -78,8 +82,12 @@ public class Main extends JPanel implements Runnable, MouseListener {
 		 */
 		
 		if (buttonTracker(e.getX(), e.getY())==1) {
-			g.drawRect(0, 0, 1000, 700);
+			clearBoard(getGraphics());
+			new Thread((Runnable) panel).start();
+			game.repaint(getGraphics());
+			currentScreen=1;
 		}
+		
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
