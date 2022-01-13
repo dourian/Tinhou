@@ -102,10 +102,10 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 
 	public void playGame() {
 		game.playAudio();
+		requestFocus();
 		while(true) {
 			game.cycle();
 			repaint();
-			requestFocus();
 		}
 	}
 	@Override

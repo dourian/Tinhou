@@ -1,13 +1,21 @@
 import java.awt.Graphics;
+import java.awt.Image;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import javax.imageio.ImageIO;
 public class Game {
 	private ArrayList<Entity> list;
 	private Player player;
 	private int height, width;
 	private long previousCycle;
 	private SoundProcessor sp;
+	private Image backgroundImage;
 	Game(int h, int w, boolean mouse, String file) {
+		try {
+			backgroundImage = ImageIO.read(new File("background_scaled.png"));
+		} catch (IOException e1) { e1.printStackTrace(); }
 		height = h; width = w;
 		list = new ArrayList<Entity>();
 		try {
@@ -23,11 +31,9 @@ public class Game {
 	public Player getListener() { return player; }
 	public void playAudio() {sp.play();}
 	public void addEntity(Entity e) { list.add(e); }
-	float fps;
 	public void cycle() {
 		if(previousCycle == -1) previousCycle = System.currentTimeMillis()-1;
 		float f = (System.currentTimeMillis()-previousCycle)/1000.0f;
-		fps = 1/f;
 		previousCycle=System.currentTimeMillis();
 		ArrayList<Entity> newlist = new ArrayList<Entity>();
 		for(Entity e: list) {
@@ -38,7 +44,7 @@ public class Game {
 		for(Entity e: list) if(e != player && e.collides(player)) player.hit(1);
 	}
 	public void repaint(Graphics g) {
-		g.drawString(Double.toString(fps),10,10);
+		g.drawImage(backgroundImage, 0, 0, null);
 		for(Entity e: list) e.repaint(g);
 		//TODO draw background and music visualizer and ui and stuff
 		int window = 4096;
