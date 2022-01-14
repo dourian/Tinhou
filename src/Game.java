@@ -31,7 +31,7 @@ public class Game {
 	public Player getListener() { return player; }
 	public void playAudio() {sp.play();}
 	public void addEntity(Entity e) { list.add(e); }
-	public void cycle() {
+	public boolean cycle() {
 		if(previousCycle == -1) previousCycle = System.currentTimeMillis()-1;
 		float f = (System.currentTimeMillis()-previousCycle)/1000.0f;
 		previousCycle=System.currentTimeMillis();
@@ -42,6 +42,7 @@ public class Game {
 		}
 		list = newlist;
 		for(Entity e: list) if(e != player && e.collides(player)) player.hit(1);
+		return newlist.contains(player);
 	}
 	public void repaint(Graphics g) {
 		g.drawImage(backgroundImage, 0, 0, null);
