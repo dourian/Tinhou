@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public abstract class Player extends Entity {
-	private int HP, speed;
+	protected int HP, speed;
 	Player(Complex position) throws IOException {
 		super(position, new Complex(0, 0), 10, ImageIO.read(new File("character.png")));
 		HP = 1; speed = 300;
@@ -82,5 +82,22 @@ class PlayerKeyboard extends Player implements KeyListener {
 			}
 			break;
 		}
+	}
+}
+
+class PlayerMouse extends Player implements MouseMotionListener {
+	private Complex targ;
+	PlayerMouse(Complex position) throws IOException {
+		super(position); targ = position;
+	}
+	public boolean cycle(float f) {
+		vel = targ.minus(pos);
+		if(vel.abs()>speed*f) vel = vel.div(vel.abs()).mult(speed*f);
+		pos = pos.plus(vel);
+		return HP > 0;
+	}
+	public void mouseDragged(MouseEvent e) { }
+	public void mouseMoved(MouseEvent e) {
+		targ = new Complex(e.getX(),e.getY());
 	}
 }

@@ -12,13 +12,14 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	Image offScreenImage;
 	Graphics offScreenBuffer;
 	static Stack navigation;
+	boolean usingMouse;
 
 	final int HOME=0, PLAY = 1, LEADERBOARD = 2, SETTINGS = 3, PLAYBUTTON = 4, LEADERBUTTON = 5, SETTINGSBUTTON = 6;
 	static int gameState = 0;
 
 	Main() {
-		game = new Game(700, 1000, false, "keshi.wav");
-		addKeyListener((KeyListener) game.getListener());
+		usingMouse = true;
+		game = new Game(700, 1000, usingMouse, "keshi.wav");
 		
 		navigation = new Stack <Integer> ();
 		navigation.add(HOME);
@@ -30,7 +31,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		images[PLAYBUTTON] = Toolkit.getDefaultToolkit().getImage("playbuttondark.png");
 		images[LEADERBUTTON] = Toolkit.getDefaultToolkit().getImage("leaderboardbuttondark.png");
 		images[SETTINGSBUTTON] = Toolkit.getDefaultToolkit().getImage("settingsbuttondark.png");
-
+		
 		addMouseListener (this);
 		frame.addKeyListener (this);
 	}
@@ -103,6 +104,8 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	}
 
 	public void playGame() {
+		if(usingMouse) addMouseMotionListener((MouseMotionListener) game.getListener());
+		else addKeyListener((KeyListener) game.getListener());
 		game.playAudio();
 		requestFocus();
 		while(true) {

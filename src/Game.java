@@ -13,13 +13,13 @@ public class Game {
 	private SoundProcessor sp;
 	private Image backgroundImage;
 	Game(int h, int w, boolean mouse, String file) {
-//		try {
-////			backgroundImage = ImageIO.read(new File("background_scaled.png"));
-//		} catch (IOException e1) { e1.printStackTrace(); }
+		try {
+			backgroundImage = ImageIO.read(new File("background_scaled.png"));
+		} catch (IOException e1) { e1.printStackTrace(); }
 		height = h; width = w;
 		list = new ArrayList<Entity>();
 		try {
-			if(mouse) {}
+			if(mouse) player = new PlayerMouse(new Complex(h/2,w/2));
 			else player = new PlayerKeyboard(new Complex(h/2, w/2));
 		} catch (IOException e) { e.printStackTrace(); }
 		list.add(player);
