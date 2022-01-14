@@ -13,11 +13,11 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	Graphics offScreenBuffer;
 	static Stack navigation;
 
-	final int HOME=0, PLAY = 1, LEADERBOARD = 2, SETTINGS = 3;
+	final int HOME=0, PLAY = 1, LEADERBOARD = 2, SETTINGS = 3, PLAYBUTTON = 4, LEADERBUTTON = 5, SETTINGSBUTTON = 6;
 	static int gameState = 0;
 
 	Main() {
-		game = new Game(700, 1000, false, "keshi 2.wav");
+		game = new Game(700, 1000, false, "keshi.wav");
 		addKeyListener((KeyListener) game.getListener());
 		
 		navigation = new Stack <Integer> ();
@@ -27,7 +27,9 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		images[HOME] = Toolkit.getDefaultToolkit().getImage("openingscreen.png");
 		images[LEADERBOARD] = Toolkit.getDefaultToolkit().getImage("leaderboardscreen.png");
 		images[SETTINGS] = Toolkit.getDefaultToolkit().getImage("settingsscreen.png");
-
+		images[PLAYBUTTON] = Toolkit.getDefaultToolkit().getImage("playbuttondark.png");
+		images[LEADERBUTTON] = Toolkit.getDefaultToolkit().getImage("leaderboardbuttondark.png");
+		images[SETTINGSBUTTON] = Toolkit.getDefaultToolkit().getImage("settingsbuttondark.png");
 
 		addMouseListener (this);
 		frame.addKeyListener (this);
@@ -141,7 +143,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+		System.out.println(e.getX() +" "+ e.getY());
 
 	}
 	@Override
@@ -153,13 +155,13 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println("esc");
+//		System.out.println("esc");
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println("esc");
+//		System.out.println("esc");
 	}
 
 	@Override

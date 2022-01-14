@@ -13,9 +13,9 @@ public class Game {
 	private SoundProcessor sp;
 	private Image backgroundImage;
 	Game(int h, int w, boolean mouse, String file) {
-		try {
-			backgroundImage = ImageIO.read(new File("background_scaled.png"));
-		} catch (IOException e1) { e1.printStackTrace(); }
+//		try {
+////			backgroundImage = ImageIO.read(new File("background_scaled.png"));
+//		} catch (IOException e1) { e1.printStackTrace(); }
 		height = h; width = w;
 		list = new ArrayList<Entity>();
 		try {
