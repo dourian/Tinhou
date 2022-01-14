@@ -154,6 +154,11 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		// TODO Auto-generated method stub
 
 	}
+	
+
+	public void mouseMoved(MouseEvent e) {
+		System.out.println(e.getX()+" "+e.getY());
+	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
