@@ -57,7 +57,7 @@ class PlayerKeyboard extends Player implements KeyListener {
 	}
 	public void keyReleased(KeyEvent e) {
 		switch(e.getKeyCode()) {
-		case KeyEvent.VK_W:
+		case KeyEvent.VK_W:				
 			if(W) {
 				vel = vel.minus(new Complex(0, -100));
 				W = false;
