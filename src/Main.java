@@ -1,7 +1,13 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.BitSet;
+import java.util.Comparator;
+import java.util.Scanner;
 import java.util.Stack;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -20,10 +26,10 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	final int HOME=0, PLAY = 1, LEADERBOARD = 2, SETTINGS = 3, PLAYBUTTON = 4, LEADERBUTTON = 5, SETTINGSBUTTON = 6;
 	static int gameState = 0;
 
-	Main() {
+	Main() throws FileNotFoundException {
 		usingMouse = true;
 		game = new Game(700, 1000, usingMouse, "keshi.wav");
-		
+
 		navigation = new Stack <Integer> ();
 		navigation.add(HOME);
 
@@ -34,9 +40,14 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		images[PLAYBUTTON] = Toolkit.getDefaultToolkit().getImage("playbuttondark.png");
 		images[LEADERBUTTON] = Toolkit.getDefaultToolkit().getImage("leaderboardbuttondark.png");
 		images[SETTINGSBUTTON] = Toolkit.getDefaultToolkit().getImage("settingsbuttondark.png");
-		
+
 		addMouseListener (this);
 		frame.addKeyListener (this);
+		
+		score.create();
+		System.out.println(score.ts);
+		score.addentry("maxwell", 11, "19/03/22");
+		System.out.println(score.ts);
 	}
 
 	public void clearBoard(Graphics g) {
@@ -54,7 +65,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		}
 
 		if (gameState!=PLAY) {
-//			System.out.println(gameState);
+			//			System.out.println(gameState);
 			update(g, gameState);
 		}
 		else {
@@ -62,7 +73,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		}
 	}
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws FileNotFoundException {
 		frame = new JFrame ();
 		frame.setPreferredSize(new Dimension(1000, 700));
 		panel = new Main();
@@ -79,7 +90,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			offScreenImage = createImage (1000,  700);
 			offScreenBuffer = offScreenImage.getGraphics ();
 		}
-//		System.out.println(state);
+		//		System.out.println(state);
 		offScreenBuffer.clearRect (0, 0, 1920, 1080);
 		offScreenBuffer.drawImage(images[state],0, 0, 1000, 700,this);
 		g.drawImage(offScreenImage,0,0,this);
@@ -137,7 +148,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		}
 
 	}
-	
+
 	public void mousePressed(MouseEvent e) { }
 	public void mouseReleased(MouseEvent e) { }
 	public void mouseEntered(MouseEvent e) { }
@@ -149,7 +160,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-//		System.out.println("esc");
+		//		System.out.println("esc");
 		if (e.getKeyCode()==KeyEvent.VK_ESCAPE) {
 			if (navigation.size()> 1 && gameState!=PLAY) {
 				navigation.pop();
@@ -160,47 +171,106 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	}
 }
 
+class score implements Comparable{
+
+	public static TreeSet <score> ts = new TreeSet();
+	private static String filename="leaderboard.txt";
+
+	private String name;
+	private String date;
+	private int scorevalue;
+
+	score(String inname, int inscore, String indate) throws FileNotFoundException{
+		name = inname;
+		scorevalue = inscore;
+		date = indate;
+	}
+
+	public static void addentry(String inname, int inscore, String indate) throws FileNotFoundException {
+		ts.add(new score (inname, inscore, indate));
+		refreshText();
+		create();
+	}
+	public static void create() throws FileNotFoundException {
+
+		Scanner in = new Scanner (new File("leaderboard.txt"));
+		score.ts.clear();
+		int count =1;
+		while (in.hasNext() && count<=10) {
+			String [] temp = in.nextLine().split(" ");
+			ts.add(new score(temp[0],Integer.parseInt(temp[1]),temp[2]));
+			count++;
+		}
+		in.close();
+		refreshText();
+	}
+	public static void refreshText () throws FileNotFoundException {
+		PrintWriter out = new PrintWriter("leaderboard.txt");
+		int count=1;
+		for (score temp : ts) {
+			if (count>10)break;
+			out.println(temp);
+			count++;
+		}
+		out.close();
+	}
+	public String toString() {
+		return String.format("%s %d %s", name, scorevalue, date);
+	}
+	@Override
+	public int compareTo(Object o) {
+		score myScore = (score)o;
+		
+		if (myScore.scorevalue - this.scorevalue==0) {
+			return myScore.name.compareTo(this.name);
+		}
+		return myScore.scorevalue - this.scorevalue;
+	}
+
+}
+
+
 
 class CentralListener implements MouseMotionListener, MouseListener, KeyListener, Runnable {
 
 	public final byte PRESS_EVENT = 1, RELEASE_EVENT = 0, NULL_EVENT = -1;
-	
+
 	private BitSet keyDown;			//true if key is held at given time
 	private BitSet keyPressed;		//true if key is held while previously key was unheld at given time
 	private BitSet mouseDown;		//true if mouse is held at given time
 	private BitSet mousePressed;	//true if mouse is held while previously mouse was unheld at given time
 	private int mouseX, mouseY;		//x and y position of cursor
-	
+
 	private JComponent jcomp;		//component to get info from
-	
+
 	Vector<EventClass> buffer;		//buffer (vectors are threadsafe)
-	
+
 	CentralListener(JComponent comp) {
-		
+
 		keyDown = new BitSet(1<<16);
 		keyPressed = new BitSet(1<<16);
 		mouseDown = new BitSet(MouseInfo.getNumberOfButtons()+1);
 		mousePressed = new BitSet(MouseInfo.getNumberOfButtons()+1);
-		
+
 		jcomp = comp;
 		jcomp.addMouseMotionListener(this);
 		jcomp.addMouseListener(this);
 		jcomp.addKeyListener(this);
-		
+
 		buffer = new Vector<EventClass>();
-		
+
 		new Thread(this).start();
 	}
-	
+
 	//set keys
 	public void keyTyped(KeyEvent e) { }
 	public void keyPressed(KeyEvent e) { buffer.add(new EventClass(e, PRESS_EVENT)); }
 	public void keyReleased(KeyEvent e) { buffer.add(new EventClass(e, PRESS_EVENT)); }
-	
+
 	//get keys
 	public boolean isHeld(int keyCode) { return keyDown.get(keyCode); }
 	public boolean isPressed(int keyCode) { return keyPressed.get(keyCode); }
-	
+
 	//set mouse
 	public void mouseClicked(MouseEvent e) { }
 	public void mousePressed(MouseEvent e) { buffer.add(new EventClass(e, PRESS_EVENT)); }
@@ -209,13 +279,13 @@ class CentralListener implements MouseMotionListener, MouseListener, KeyListener
 	public void mouseExited(MouseEvent e) { buffer.add(new EventClass(e, NULL_EVENT)); }
 	public void mouseDragged(MouseEvent e) { buffer.add(new EventClass(e, NULL_EVENT)); }
 	public void mouseMoved(MouseEvent e) { buffer.add(new EventClass(e, NULL_EVENT)); }
-	
+
 	//get mouse info
 	public boolean mouseIsHeld(int button) {return mouseDown.get(button);}
 	public boolean mouseIsPressed(int button) {return mousePressed.get(button);}
 	public int getX() {return mouseX;}
 	public int getY() {return mouseY;}
-	
+
 	public void run() {
 		while(true) {
 			keyPressed.clear();
