@@ -5,18 +5,18 @@ import javax.swing.*;
 import javax.sound.sampled.*;
 
 public class Audiotester extends JPanel implements Runnable {
-	int pos, window;
+	int pos;
 	SoundProcessor sp;
 	
 	Audiotester() throws Exception {
 		
-		pos = 0; window = 5000;
+		pos = 0;
 		
-		sp = new SoundProcessor("sun.wav");
+		sp = new SoundProcessor("avril.wav");
 	}
 	
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
+		super.paintComponent(g);/*
 		for(int c = 0; c < sp.channels(); c++) {
 			for(int i = 0; i < window; i++) {
 				g.drawLine(i/5, sp.get(c,(pos+i)%sp.sze())/500+50 + 100*c, (i+1)/5, sp.get(c,(pos+i+1)%sp.sze())/500+50 + 100*c);
@@ -31,6 +31,20 @@ public class Audiotester extends JPanel implements Runnable {
 				}
 				g.setColor(Color.BLACK);
 			}
+		}*/
+		int N = 11;
+		short[] sbdata = sp.getsubdata(0, pos, pos+(1<<N));
+		float[] arr = DFT.fFFT(sbdata);
+		double coef = 6/Math.log(1.0594630943592953);
+		for(int i = 1; i < arr.length-1; i++) {
+			g.drawLine((int)(Math.log(i)*coef), 550-(int)(arr[i]/(10<<N)), (int)(Math.log(i+1)*coef), 550-(int)(arr[i+1]/(10<<N)));
+		}
+		
+		int[] sbdata_i = sp.getsubdata_interp(0, pos, pos+(1<<N)+1, 8);
+		N += 3;
+		arr = DFT.fFFT(sbdata_i);
+		for(int i = 1; i < arr.length-1; i++) {
+			g.drawLine((int)(Math.log(i)*coef), 250-(int)(arr[i]/(10<<N)), (int)(Math.log(i+1)*coef), 250-(int)(arr[i+1]/(10<<N)));
 		}
 		
 		g.drawString(Integer.toString(pos), 10, 10);
@@ -58,7 +72,7 @@ public class Audiotester extends JPanel implements Runnable {
 			while(pos < sp.sze()) {
 				pos = sp.audioPos();
 				repaint();
-				Thread.sleep(10);
+				//Thread.sleep(10);
 			} 
 		}catch (Exception e) {
 			e.printStackTrace();

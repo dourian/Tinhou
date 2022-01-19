@@ -45,6 +45,18 @@ public class SoundProcessor {
 	
 	short get(int x, int y) {return data[x][y];}
 	short[] getsubdata(int x, int a, int b) {return Arrays.copyOfRange(data[x],a,b);}
+	int[] getsubdata_interp(int x, int a, int b, int f) {
+		short[] arr = getsubdata(x, a, b);
+		int[] ret = new int[(arr.length-1)*f];
+		for(int i = 1; i < arr.length-1; i++) {
+			double A = ((int)arr[i+1])+arr[i-1]>>1, B = ((int)arr[i+1])-arr[i-1]>>1, C = arr[i];
+			for(int i2 = -f; i2 <= f; i2++) {
+				double tmp = (double)i2/f;
+				if(i+i2 >= 0 && i+i2 < (arr.length-1)*f) ret[i+i2] = (int)(A*tmp*tmp+B*tmp+C);
+			}
+		}
+		return ret;
+	}
 	int sze() {return data[0].length;}
 	
 	void play() {audio.start();}
