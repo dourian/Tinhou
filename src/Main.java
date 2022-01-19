@@ -30,7 +30,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	Main() throws FileNotFoundException {
 
 		usingMouse = true;
-		game = new Game(1000, 700, usingMouse, "keshi.wav");
+		game = new Game(700, 1000, usingMouse, "keshi.wav");
 
 		navigation = new Stack <Integer> ();
 		navigation.add(HOME);
