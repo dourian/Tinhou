@@ -7,14 +7,15 @@ import java.util.BitSet;
 import java.util.Comparator;
 import java.util.Scanner;
 import java.util.Stack;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.*;
 
 public class Main extends JPanel implements Runnable, MouseListener, KeyListener {
-	Game game;
 
+	Game game;
 	static JPanel panel;
 	static JFrame frame;
 	Image [] images;
@@ -27,8 +28,9 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	static int gameState = 0;
 
 	Main() throws FileNotFoundException {
+
 		usingMouse = true;
-		game = new Game(700, 1000, usingMouse, "keshi.wav");
+		game = new Game(1000, 700, usingMouse, "keshi.wav");
 
 		navigation = new Stack <Integer> ();
 		navigation.add(HOME);
@@ -43,11 +45,9 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 
 		addMouseListener (this);
 		frame.addKeyListener (this);
-		
+
 		score.create();
-		System.out.println(score.ts);
-		score.addentry("maxwell", 11, "19/03/22");
-		System.out.println(score.ts);
+//		for (score s: score.ts)System.out.println(s);
 	}
 
 	public void clearBoard(Graphics g) {
@@ -81,7 +81,6 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		frame.pack ();
 		frame.setVisible (true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 	}
 
 	public void update(Graphics g, int state) {
@@ -90,10 +89,21 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			offScreenImage = createImage (1000,  700);
 			offScreenBuffer = offScreenImage.getGraphics ();
 		}
-		//		System.out.println(state);
+
 		offScreenBuffer.clearRect (0, 0, 1920, 1080);
 		offScreenBuffer.drawImage(images[state],0, 0, 1000, 700,this);
 		g.drawImage(offScreenImage,0,0,this);
+		
+		if (state==LEADERBOARD) displayLeaderboard(g);
+	}
+	
+	public void displayLeaderboard(Graphics g) {
+		int y = 250;
+		g.drawString(String.format("%15s%25s%25s", "Name", "Score", "Date"), 300, 225);
+		for (score s : score.ts) {
+			g.drawString(String.format("%15s%25d%25s", s.getName(),s.getScore(),s.getDate()), 300, y);
+			y+=25;
+		}
 	}
 
 	public int buttonTracker(int x, int y) {
@@ -108,7 +118,6 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 				return SETTINGS;
 			}
 		}
-
 		return -1;
 	}
 
@@ -129,7 +138,6 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
-
 		if (buttonTracker(e.getX(), e.getY())==PLAY) {
 			gameState = PLAY;
 			navigation.push(PLAY);
@@ -146,7 +154,6 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			navigation.push(SETTINGS);
 			repaint();
 		}
-
 	}
 
 	public void mousePressed(MouseEvent e) { }
@@ -159,8 +166,6 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		//		System.out.println("esc");
 		if (e.getKeyCode()==KeyEvent.VK_ESCAPE) {
 			if (navigation.size()> 1 && gameState!=PLAY) {
 				navigation.pop();
@@ -171,7 +176,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	}
 }
 
-class score implements Comparable{
+class score implements Comparable {
 
 	public static TreeSet <score> ts = new TreeSet();
 	private static String filename="leaderboard.txt";
@@ -192,13 +197,12 @@ class score implements Comparable{
 		create();
 	}
 	public static void create() throws FileNotFoundException {
-
 		Scanner in = new Scanner (new File("leaderboard.txt"));
 		score.ts.clear();
-		int count =1;
+		int count = 1;
 		while (in.hasNext() && count<=10) {
-			String [] temp = in.nextLine().split(" ");
-			ts.add(new score(temp[0],Integer.parseInt(temp[1]),temp[2]));
+			StringTokenizer tp = new StringTokenizer(in.nextLine(), "\t");
+			ts.add(new score(tp.nextToken(),Integer.parseInt(tp.nextToken()),tp.nextToken()));
 			count++;
 		}
 		in.close();
@@ -215,16 +219,26 @@ class score implements Comparable{
 		out.close();
 	}
 	public String toString() {
-		return String.format("%s %d %s", name, scorevalue, date);
+		return String.format("%s\t\t%d\t\t%s", name, scorevalue, date);
 	}
 	@Override
 	public int compareTo(Object o) {
 		score myScore = (score)o;
-		
+
 		if (myScore.scorevalue - this.scorevalue==0) {
 			return myScore.name.compareTo(this.name);
 		}
 		return myScore.scorevalue - this.scorevalue;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	public int getScore() {
+		return scorevalue;
+	}
+	public String getDate() {
+		return date;
 	}
 
 }
@@ -318,4 +332,5 @@ class CentralListener implements MouseMotionListener, MouseListener, KeyListener
 		byte type;
 		EventClass(InputEvent e, byte t) {event = e; type = t;}
 	}
+
 }
