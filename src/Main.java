@@ -98,10 +98,11 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	}
 	
 	public void displayLeaderboard(Graphics g) {
-		int y = 250;
-		g.drawString(String.format("%15s%25s%25s", "Name", "Score", "Date"), 300, 225);
+		int y = 200;
+		g.setFont(new Font("Courier", Font.PLAIN, 20));
+		g.drawString(String.format("%15s%25s%25s", "Name", "Score", "Date"), 60, 175);
 		for (score s : score.ts) {
-			g.drawString(String.format("%15s%25d%25s", s.getName(),s.getScore(),s.getDate()), 300, y);
+			g.drawString(String.format("%15s%25d%25s", s.getName(),s.getScore(),s.getDate()), 60, y);
 			y+=25;
 		}
 	}
