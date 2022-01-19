@@ -30,7 +30,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	Main() throws FileNotFoundException {
 
 		usingMouse = true;
-		game = new Game(1000, 700, usingMouse, "keshi.wav");
+		game = new Game(700, 1000, usingMouse, "keshi.wav");
 
 		navigation = new Stack <Integer> ();
 		navigation.add(HOME);
@@ -90,7 +90,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			offScreenBuffer = offScreenImage.getGraphics ();
 		}
 
-		offScreenBuffer.clearRect (0, 0, 1920, 1080);
+		offScreenBuffer.clearRect (0, 0, 1000, 700);
 		offScreenBuffer.drawImage(images[state],0, 0, 1000, 700,this);
 		g.drawImage(offScreenImage,0,0,this);
 		
