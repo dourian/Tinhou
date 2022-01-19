@@ -6,7 +6,7 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 public class Game {
-	private ArrayList<Entity> list;
+	private Vector<Entity> list;
 	private Player player;
 	private int height, width;
 	private long previousCycle;
@@ -17,7 +17,7 @@ public class Game {
 			backgroundImage = ImageIO.read(new File("background_scaled.png"));
 		} catch (IOException e1) { e1.printStackTrace(); }
 		height = h; width = w;
-		list = new ArrayList<Entity>();
+		list = new Vector<Entity>();
 		try {
 			if(mouse) player = new PlayerMouse(new Complex(h/2,w/2));
 			else player = new PlayerKeyboard(new Complex(h/2, w/2));
@@ -35,16 +35,21 @@ public class Game {
 		if(previousCycle == -1) previousCycle = System.currentTimeMillis()-1;
 		float f = (System.currentTimeMillis()-previousCycle)/1000.0f;
 		previousCycle=System.currentTimeMillis();
-		ArrayList<Entity> newlist = new ArrayList<Entity>();
+		Vector<Entity> newlist = new Vector<Entity>();
 		for(Entity e: list) {
 			if(e.cycle(f)) newlist.add(e);
 			e.correctPos(height, width);
 		}
 		list = newlist;
 		for(Entity e: list) if(e != player && e.collides(player)) player.hit(1);
+		
+		//add bullets
+		if(Math.random()<0.00001) addEntity(new Bullet(new Complex(width/2, height/2), Complex.polar(Math.random()*Math.PI*2, 100), 0));
+		
 		return newlist.contains(player);
 	}
 	public void repaint(Graphics g) {
+		g.drawString(Integer.toString(player.getHP()), 10, 10);
 		g.drawImage(backgroundImage, 0, 0, null);
 		for(Entity e: list) e.repaint(g);
 		//TODO draw background and music visualizer and ui and stuff

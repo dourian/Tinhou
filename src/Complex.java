@@ -11,7 +11,7 @@ public class Complex {
 	public static Complex polar(double arg, double mag) {return new Complex(Math.cos(arg)*mag, Math.sin(arg)*mag);}
 	
 	public double abs() {return Math.hypot(re, im);}
-	public double arg() {return Math.atan(im/re);}
+	public double arg() {return Math.atan(im/re) + (re<0?Math.PI:0);}
 	public Complex conj() {return new Complex(re, -im);}
 	public Complex div(double d) {return new Complex(re/d,im/d);}
 	public Complex minus(Complex c) {return new Complex(re-c.re,im-c.im);}

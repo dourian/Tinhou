@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 import javax.imageio.ImageIO;
@@ -26,6 +27,12 @@ public class Bullet extends Entity {
 	Bullet(Complex position, Complex velocity, int type) {
 		super(position, velocity, radii[type], icons[type]);
 		timetolive = 3;
+		int W = icon.getWidth(null), H = icon.getHeight(null);
+		BufferedImage rotated = new BufferedImage(W, H, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = rotated.createGraphics();
+		g.rotate(vel.arg()+Math.PI/2, W/2, H/2);
+		g.drawImage(icon, 0, 0, null);
+		icon = rotated;
 	}
 	
 	public boolean cycle(float f) {
