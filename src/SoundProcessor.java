@@ -10,6 +10,8 @@ public class SoundProcessor {
 	private AudioFormat af;
 	private Clip audio;
 	private short[][] data;
+	float[][] fftdata;
+	int pointer;
 	SoundProcessor(String fileName) throws IOException {
 		AudioInputStream ais = null; audio = null;
 		
@@ -41,6 +43,9 @@ public class SoundProcessor {
 			e.printStackTrace();
 			return;
 		}
+		
+		fftdata = new float[5][1];
+		pointer = 0;
 	}
 	
 	short get(int x, int y) {return data[x][y];}
@@ -52,7 +57,7 @@ public class SoundProcessor {
 			double A = ((int)arr[i+1])+arr[i-1]>>1, B = ((int)arr[i+1])-arr[i-1]>>1, C = arr[i];
 			for(int i2 = -f; i2 <= f; i2++) {
 				double tmp = (double)i2/f;
-				if(i+i2 >= 0 && i+i2 < (arr.length-1)*f) ret[i+i2] = (int)(A*tmp*tmp+B*tmp+C);
+				if(i+i2 >= 0 && i+i2 < (arr.length-1)*f) ret[i+i2] += (int)(A*tmp*tmp+B*tmp+C)/2;
 			}
 		}
 		return ret;
@@ -62,4 +67,18 @@ public class SoundProcessor {
 	void play() {audio.start();}
 	int audioPos() {return audio.getFramePosition();}
 	int channels() {return af.getChannels();}
+	
+	void fftNow(int window, int interp) {
+		int pos = audioPos();
+		pointer++; pointer %= 5;
+		if(interp == 0) fftdata[pointer] = DFT.fFFT(getsubdata(0, pos, pos+window));
+		else fftdata[pointer] = DFT.fFFT(getsubdata_interp(0, pos, pos+window+1, interp));
+		float lg = 100<<(int)(Math.log(window)/Math.log(2));
+		for(int i = 0; i <fftdata[pointer].length; i++) {
+			fftdata[pointer][i] /= lg / Math.log(i);
+		}
+	}
+	float[] fftget(int idx) {
+		return fftdata[((pointer+idx)%5+5)%5];
+	}
 }

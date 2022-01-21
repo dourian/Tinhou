@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
@@ -7,12 +8,14 @@ import java.util.*;
 import javax.imageio.ImageIO;
 public class Game {
 	private Vector<Entity> list;
+	boolean updateFlag;
 	private Player player;
 	private int height, width;
 	private long previousCycle;
 	private SoundProcessor sp;
 	private Image backgroundImage;
 	Game(int h, int w, boolean mouse, String file) {
+		updateFlag = false;
 		try {
 			backgroundImage = ImageIO.read(new File("background_scaled.png"));
 		} catch (IOException e1) { e1.printStackTrace(); }
@@ -44,25 +47,38 @@ public class Game {
 		for(Entity e: list) if(e != player && e.collides(player)) player.hit(1);
 		
 		//add bullets
-		if(Math.random()<0.00001) addEntity(new Bullet(new Complex(width/2, height/2), Complex.polar(Math.random()*Math.PI*2, 100), 0));
-		
+		if(updateFlag) {
+			float[] cur = sp.fftget(0);
+			float[] prv = sp.fftget(1);
+			double coef = 2*Math.PI/Math.log(Math.min(cur.length/2,prv.length/2));
+			for(int i = 0; i < cur.length/2 && i < prv.length/2; i++) if(cur[i]/(prv[i]+1)>7){
+				double angle = Math.log(i)*coef;
+				addEntity(new Bullet(new Complex(width/2,height/2),Complex.polar(angle, 200), 1));
+			}
+			updateFlag = false;
+		}
 		return newlist.contains(player);
 	}
 	public synchronized void repaint(Graphics g) {
-		g.drawString(Integer.toString(player.getHP()), 10, 10);
 		g.drawImage(backgroundImage, 0, 0, null);
 		for(Entity e: list) e.repaint(g);
 		//TODO draw background and music visualizer and ui and stuff
 		int window = 4096;
+		sp.fftNow(window, 0);
+		updateFlag = true;
 		if(sp.audioPos()+window < sp.sze()) {
 			int pos = sp.audioPos();
-			float[] data = DFT.fFFT(sp.getsubdata(0, pos, pos+window));
+			float[] data = sp.fftget(0);
+			window = data.length;
 			double coef = width/Math.log(window);
 			for(int i = 0; i+1 < window; i++) {
 				int lg = (int)(Math.log(i)*coef);
 				int lgp1 = (int)(Math.log(i+1)*coef);
-				g.drawLine(lg, height-(int)(data[i]/300000*Math.log(i))-50, lgp1, height-(int)(data[i+1]/300000*Math.log(i+1))-50);
+				g.drawLine(lg, height-(int)(data[i])-50, lgp1, height-(int)(data[i+1])-50);
 			}
 		}
+		g.setColor(Color.WHITE);
+		g.drawString(Integer.toString(player.getHP()), 10, 50);
+		g.setColor(Color.BLACK);
 	}
 }

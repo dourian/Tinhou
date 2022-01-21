@@ -12,10 +12,6 @@ public class DFT {
 		return ret;
 	}
 	public static Complex[] FFT(short[] arr) { //NlogF DFT computation. assumes arr is length 2^k
-		if(Integer.bitCount(arr.length) > 1) {
-			System.out.println("Error FFT length: " + arr.length);
-			return compute(arr);
-		}
 		Complex[] ret = new Complex[arr.length], eret, oret; ret[0] = new Complex(arr[0], 0); 
 		if(arr.length == 1) return ret;
 		short[][] sub = new short[2][arr.length/2];
@@ -28,9 +24,12 @@ public class DFT {
 		return ret;
 	}
 	public static float[] fFFT(short[] arr) {
+		long st = System.currentTimeMillis();
 		Complex[] a = FFT(arr);
 		float[] ret = new float[arr.length];
 		for(int i = 0; i < arr.length; i++) ret[i] = (float)a[i].abs();
+		long nd = System.currentTimeMillis();
+		if((nd-st)/100.0>5e-2) System.out.println("DFT time: " + (nd-st)/100.0);
 		return ret;
 	}
 	public static Complex compute(short[] arr, double k) {

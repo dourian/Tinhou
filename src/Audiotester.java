@@ -12,39 +12,24 @@ public class Audiotester extends JPanel implements Runnable {
 		
 		pos = 0;
 		
-		sp = new SoundProcessor("avril.wav");
+		sp = new SoundProcessor("keshi.wav");
 	}
 	
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);/*
-		for(int c = 0; c < sp.channels(); c++) {
-			for(int i = 0; i < window; i++) {
-				g.drawLine(i/5, sp.get(c,(pos+i)%sp.sze())/500+50 + 100*c, (i+1)/5, sp.get(c,(pos+i+1)%sp.sze())/500+50 + 100*c);
-			}
-			if(pos+512<sp.sze()) {
-				short[] sbdata = sp.getsubdata(c, pos, pos+512);
-				float[] arr;
-				arr = DFT.fFFT(sbdata);
-				g.setColor(Color.RED);
-				for(int i = 0; i+1 < 256; i++) {
-					g.drawLine((int)(100*Math.log(i)), 300+200*c+-(int)arr[i]/10000, (int)(100*Math.log(i+1)), 300+200*c+-(int)arr[(i+1)%256]/10000);
-				}
-				g.setColor(Color.BLACK);
-			}
-		}*/
-		int N = 11;
-		short[] sbdata = sp.getsubdata(0, pos, pos+(1<<N));
-		float[] arr = DFT.fFFT(sbdata);
+		super.paintComponent(g);
+		int N = 10;
+		sp.fftNow(1<<N, 0);
+		float[] arr = sp.fftget(0);
 		double coef = 6/Math.log(1.0594630943592953);
 		for(int i = 1; i < arr.length-1; i++) {
-			g.drawLine((int)(Math.log(i)*coef), 550-(int)(arr[i]/(10<<N)), (int)(Math.log(i+1)*coef), 550-(int)(arr[i+1]/(10<<N)));
+			g.drawLine((int)(Math.log(i)*coef), 550-(int)arr[i], (int)(Math.log(i+1)*coef), 550-(int)arr[i+1]);
 		}
 		
-		int[] sbdata_i = sp.getsubdata_interp(0, pos, pos+(1<<N)+1, 8);
-		N += 3;
-		arr = DFT.fFFT(sbdata_i);
+		sp.fftNow(1<<N, 2);
+		N += 2;
+		arr = sp.fftget(0);
 		for(int i = 1; i < arr.length-1; i++) {
-			g.drawLine((int)(Math.log(i)*coef), 250-(int)(arr[i]/(10<<N)), (int)(Math.log(i+1)*coef), 250-(int)(arr[i+1]/(10<<N)));
+			g.drawLine((int)(Math.log(i)*coef), 250-(int)arr[i], (int)(Math.log(i+1)*coef), 250-(int)arr[i+1]);
 		}
 		
 		g.drawString(Integer.toString(pos), 10, 10);
