@@ -52,9 +52,15 @@ public class Game {
 			float[] cur = sp.fftget(0);
 			float[] prv = sp.fftget(1);
 			double coef = 2*Math.PI/Math.log(Math.min(cur.length/2,prv.length/2));
-			for(int i = 0; i < cur.length/2 && i < prv.length/2; i++) if(cur[i]/(prv[i]+1)>7){
-				double angle = Math.log(i)*coef;
-				addEntity(new Bullet(new Complex(width/2,height/2),Complex.polar(angle, 200), 1));
+			ArrayList<Complex> candidates = new ArrayList<Complex>();
+			for(int i = 0; i < cur.length/2 && i < prv.length/2; i++) if(cur[i]/(prv[i]+1)>3){
+				candidates.add(new Complex(cur[i]/(prv[i]+1), i));
+			}
+			Collections.sort(candidates);
+			double div = Math.log(1.0594630943592953);
+			for(int i = 0; i <candidates.size() && i <3; i++) {
+				double d = candidates.get(i).imag();
+				addEntity(new Bullet(new Complex(width/2,height/2),Complex.polar(Math.log(d)*coef+Math.random()*3, 200), (int)(Math.log(d*10.7666015625)/div%6)));
 			}
 			updateFlag = false;
 		}

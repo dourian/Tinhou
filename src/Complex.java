@@ -3,7 +3,7 @@ import java.util.Objects;
  * @author max13
  * basic complex number that supports arithmetic operations. 
  */
-public class Complex {
+public class Complex implements Comparable<Complex> {
 	private double re, im;
 	private final double EPS = 1e-6;
 	
@@ -26,4 +26,7 @@ public class Complex {
 	
 	public boolean equals(Object o) {return minus((Complex)o).abs()<EPS;}
 	public int hashCode() {return Objects.hash(re, im);}
+	public int compareTo(Complex o) {
+		return (int)((o.real()-real())*100);
+	}
 }
