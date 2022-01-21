@@ -12,10 +12,11 @@ public class Game {
 	private Player player;
 	private int height, width;
 	private long previousCycle;
+	private long score;
 	private SoundProcessor sp;
 	private Image backgroundImage;
 	Game(int h, int w, boolean mouse, String file) {
-		updateFlag = false;
+		updateFlag = false; score = 0;
 		try {
 			backgroundImage = ImageIO.read(new File("background_scaled.png"));
 		} catch (IOException e1) { e1.printStackTrace(); }
@@ -33,7 +34,7 @@ public class Game {
 	}
 	public Player getListener() { return player; }
 	public void playAudio() {sp.play();}
-	public void addEntity(Entity e) { list.add(e); }
+	public void addEntity(Entity e) { list.add(e); score++; }
 	public synchronized boolean cycle() {
 		if(previousCycle == -1) previousCycle = System.currentTimeMillis()-1;
 		float f = (System.currentTimeMillis()-previousCycle)/1000.0f;
@@ -81,4 +82,5 @@ public class Game {
 		g.drawString(Integer.toString(player.getHP()), 10, 50);
 		g.setColor(Color.BLACK);
 	}
+	public long getScore() {return score;}
 }
