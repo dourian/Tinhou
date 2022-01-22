@@ -73,7 +73,7 @@ public class SoundProcessor {
 		pointer++; pointer %= 5;
 		if(interp == 0) fftdata[pointer] = DFT.fFFT(getsubdata(0, pos, pos+window));
 		else fftdata[pointer] = DFT.fFFT(getsubdata_interp(0, pos, pos+window+1, interp));
-		float lg = 100<<(int)(Math.log(window)/Math.log(2));
+		float lg = (float) ((500<<(int)Math.log(window))/Math.log(1.5));
 		for(int i = 0; i <fftdata[pointer].length; i++) {
 			fftdata[pointer][i] /= lg / Math.log(i);
 		}

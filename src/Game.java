@@ -7,7 +7,7 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 public class Game {
-	public final int ENTITYLIM = 50;
+	public final int ENTITYLIM = 150;
 	private Vector<Entity> list;
 	boolean updateFlag;
 	private Player player;
@@ -67,17 +67,17 @@ public class Game {
 				for(int i = 0; i < means.length; i++)
 					for(int i2 = 1; i2 < 25; i2++) means[i][i2<16?0:1] += data[i][i2]/25;
 				if(means[0][0] > (means[1][0]+means[2][0]+0.75) || means[0][1] > (means[1][1]+means[2][1]+0.75)) {
-					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 200), 1));
+					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 150), 1));
 				}
 				long cnt[] = new long[data.length];
 				for(int i = 0; i < data.length; i++)
-					for(int i2 = 220; i2 < len; i2++) cnt[i] += data[i][i2-1]+data[i][i2+1]-2*data[i][i2]>2?1:0;
+					for(int i2 = 256; i2 < len; i2++) cnt[i] += data[i][i2-1]+data[i][i2+1]-2*data[i][i2]>2?1:0;
 				if(cnt[0] > (cnt[1]+cnt[2])*4/5 && cnt[0] > 100) {
 					System.out.println(cnt[0]);
 					System.out.println(cnt[1]);
 					System.out.println(cnt[2] + "\n");
 					for(int i = 0; i < 6; i++)
-						addEntity(new Bullet(faucet.pos(), Complex.polar(Math.random()*Math.PI*2, 150), 4));
+						addEntity(new Bullet(faucet.pos(), Complex.polar(Math.random()*Math.PI*2, 250), 4));
 				}
 			}
 			updateFlag = false;
@@ -94,13 +94,20 @@ public class Game {
 		if(sp.audioPos()+window < sp.sze()) {
 			int pos = sp.audioPos();
 			float[] data = sp.fftget(0);
-			window = data.length;
+			window = data.length/2;
 			double coef = width/Math.log(window);
+			g.setColor(Color.WHITE);
 			for(int i = 0; i+1 < window; i++) {
 				int lg = (int)(Math.log(i)*coef);
 				int lgp1 = (int)(Math.log(i+1)*coef);
 				g.drawLine(lg, height-(int)(data[i])-50, lgp1, height-(int)(data[i+1])-50);
 			}
+			for(int i = 1; i < window; i *= 2) {
+				g.drawLine((int)(Math.log(i)*coef), height, (int)(Math.log(i)*coef), height-100);
+				g.drawString(Integer.toString(i), (int)(Math.log(i)*coef)-5, height-110);
+			}
+			g.drawLine(0, height-50, width, height-50);
+			g.drawLine(0, height-100, width, height-100);
 		}
 		
 	}
