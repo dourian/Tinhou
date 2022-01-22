@@ -7,9 +7,11 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 public class Game {
+	public final int ENTITYLIM = 50;
 	private Vector<Entity> list;
 	boolean updateFlag;
 	private Player player;
+	private BlackHole faucet, sweeper;
 	private int height, width;
 	private long previousCycle;
 	private long score;
@@ -23,18 +25,24 @@ public class Game {
 		height = h; width = w;
 		list = new Vector<Entity>();
 		try {
-			if(mouse) player = new PlayerMouse(new Complex(h/2,w/2));
-			else player = new PlayerKeyboard(new Complex(h/2, w/2));
+			if(mouse) player = new PlayerMouse(new Complex(w/4,h/4));
+			else player = new PlayerKeyboard(new Complex(w/4, h/4));
 		} catch (IOException e) { e.printStackTrace(); }
 		list.add(player);
 		previousCycle = -1;
 		try {
 			sp = new SoundProcessor(file);
 		} catch (IOException e) { e.printStackTrace(); }
+		
+		try {
+			faucet = new BlackHole(new Complex(w/2,h/2));
+			sweeper = new BlackHole(new Complex(w/2, h/2));
+			list.add(faucet); list.add(sweeper);
+		} catch (IOException e) { e.printStackTrace(); }
 	}
 	public Player getListener() { return player; }
 	public void playAudio() {sp.play();}
-	public void addEntity(Entity e) { list.add(e); score++; }
+	public void addEntity(Entity e) { if(list.size() < ENTITYLIM) {list.add(e); score++;} }
 	public synchronized boolean cycle() {
 		if(previousCycle == -1) previousCycle = System.currentTimeMillis()-1;
 		float f = (System.currentTimeMillis()-previousCycle)/1000.0f;
@@ -46,21 +54,20 @@ public class Game {
 		}
 		list = newlist;
 		for(Entity e: list) if(e != player && e.collides(player)) player.hit(1);
+		sweeper.setVel(player.pos().minus(sweeper.pos()).mult(0.1));
 		
 		//add bullets
 		if(updateFlag) {
-			float[] cur = sp.fftget(0);
-			float[] prv = sp.fftget(1);
-			double coef = 2*Math.PI/Math.log(Math.min(cur.length/2,prv.length/2));
-			ArrayList<Complex> candidates = new ArrayList<Complex>();
-			for(int i = 0; i < cur.length/2 && i < prv.length/2; i++) if(cur[i]/(prv[i]+1)>3){
-				candidates.add(new Complex(cur[i]/(prv[i]+1), i));
-			}
-			Collections.sort(candidates);
-			double div = Math.log(1.0594630943592953);
-			for(int i = 0; i <candidates.size() && i <3; i++) {
-				double d = candidates.get(i).imag();
-				addEntity(new Bullet(new Complex(width/2,height/2),Complex.polar(Math.log(d)*coef+Math.random()*3, 200), (int)(Math.log(d*10.7666015625)/div%6)));
+			float[][] data = {sp.fftget(0), sp.fftget(-1), sp.fftget(-2)};
+			int len = Math.min(Math.min(data[0].length, data[1].length), Math.min(data[2].length, data[2].length));
+			if(len == 4096) {
+				len /= 2;
+				float[][] means = new float[data.length][2];
+				for(int i = 0; i < means.length; i++)
+					for(int i2 = 1; i2 < 20; i2++) means[i][i2<16?0:1] += data[i][i2]/20;
+				if(means[0][0]/(means[1][0]+means[2][0]+0.7) > 1 || means[0][1]/(means[1][1]+means[2][1]+0.7) > 1) {
+					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 200), 3));
+				}
 			}
 			updateFlag = false;
 		}
@@ -84,9 +91,6 @@ public class Game {
 				g.drawLine(lg, height-(int)(data[i])-50, lgp1, height-(int)(data[i+1])-50);
 			}
 		}
-		g.setColor(Color.WHITE);
-		g.drawString(Integer.toString(player.getHP()), 10, 50);
-		g.setColor(Color.BLACK);
 	}
 	public long getScore() {return score;}
 }
