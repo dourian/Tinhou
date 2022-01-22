@@ -81,7 +81,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 
 	public static void main(String args[]) throws FileNotFoundException {
 		frame = new JFrame ();
-		frame.setPreferredSize(new Dimension(1000, 700));
+		frame.setPreferredSize(new Dimension(1014, 738));
 		panel = new Main();
 		frame.add (panel);
 		frame.pack ();
