@@ -50,7 +50,8 @@ public class Game {
 		Vector<Entity> newlist = new Vector<Entity>();
 		for(Entity e: list) {
 			if(e.cycle(f)) newlist.add(e);
-			e.correctPos(height, width);
+			boolean corrected = e.correctPos(height, width);
+			if(e instanceof Bullet && corrected) newlist.remove(newlist.size()-1);
 		}
 		list = newlist;
 		for(Entity e: list) if(e != player && e.collides(player)) player.hit(1);
@@ -75,7 +76,7 @@ public class Game {
 					System.out.println(cnt[0]);
 					System.out.println(cnt[1]);
 					System.out.println(cnt[2] + "\n");
-					for(int i = 0; i < 10; i++)
+					for(int i = 0; i < 6; i++)
 						addEntity(new Bullet(faucet.pos(), Complex.polar(Math.random()*Math.PI*2, 150), 4));
 				}
 			}
@@ -101,6 +102,7 @@ public class Game {
 				g.drawLine(lg, height-(int)(data[i])-50, lgp1, height-(int)(data[i+1])-50);
 			}
 		}
+		
 	}
 	public long getScore() {return score;}
 }
