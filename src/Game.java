@@ -61,10 +61,10 @@ public class Game {
 		if(updateFlag) {
 			float[][] means = sp.bassAnalyze();
 			if(means != null) {
-				if(means[0][0] > (means[1][0]+means[2][0]+0.75)) {
+				if(means[0][0] > (means[1][0]+means[2][0]+0.65)) {
 					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 150), 1));
 				}
-				if(means[0][1] > (means[1][1]+means[2][1]+0.75)) {
+				if(means[0][1] > (means[1][1]+means[2][1]+0.65)) {
 					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 200), 3));
 				}
 			}
