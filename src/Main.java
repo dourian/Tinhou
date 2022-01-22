@@ -31,7 +31,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	Main() throws FileNotFoundException {
 
 		if (fileName==null) {
-			fileName="keshi 2.wav";
+			fileName="keshi.wav";
 		}
 		usingMouse = true;
 		
