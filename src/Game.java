@@ -64,9 +64,19 @@ public class Game {
 				len /= 2;
 				float[][] means = new float[data.length][2];
 				for(int i = 0; i < means.length; i++)
-					for(int i2 = 1; i2 < 20; i2++) means[i][i2<16?0:1] += data[i][i2]/20;
-				if(means[0][0]/(means[1][0]+means[2][0]+0.7) > 1 || means[0][1]/(means[1][1]+means[2][1]+0.7) > 1) {
-					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 200), 3));
+					for(int i2 = 1; i2 < 25; i2++) means[i][i2<16?0:1] += data[i][i2]/25;
+				if(means[0][0] > (means[1][0]+means[2][0]+0.75) || means[0][1] > (means[1][1]+means[2][1]+0.75)) {
+					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 200), 1));
+				}
+				long cnt[] = new long[data.length];
+				for(int i = 0; i < data.length; i++)
+					for(int i2 = 220; i2 < len; i2++) cnt[i] += data[i][i2-1]+data[i][i2+1]-2*data[i][i2]>2?1:0;
+				if(cnt[0] > (cnt[1]+cnt[2])*4/5 && cnt[0] > 100) {
+					System.out.println(cnt[0]);
+					System.out.println(cnt[1]);
+					System.out.println(cnt[2] + "\n");
+					for(int i = 0; i < 10; i++)
+						addEntity(new Bullet(faucet.pos(), Complex.polar(Math.random()*Math.PI*2, 150), 4));
 				}
 			}
 			updateFlag = false;

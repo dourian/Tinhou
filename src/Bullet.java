@@ -26,7 +26,7 @@ public class Bullet extends Entity {
 	private double timetolive;
 	Bullet(Complex position, Complex velocity, int type) {
 		super(position, velocity, radii[type], icons[type]);
-		timetolive = 3;
+		timetolive = 1.9;
 		int W = icon.getWidth(null), H = icon.getHeight(null);
 		BufferedImage rotated = new BufferedImage(W, H, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = rotated.createGraphics();
