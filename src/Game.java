@@ -7,7 +7,7 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 public class Game {
-	public final int ENTITYLIM = 100;
+	public final int ENTITYLIM = 150;
 	private Vector<Entity> list;
 	boolean updateFlag;
 	private Player player;
@@ -42,9 +42,12 @@ public class Game {
 	}
 	public Player getListener() { return player; }
 	public void playAudio() {sp.play();}
+	public void stopAudio() {sp.stop();} 
 	public void addEntity(Entity e) { if(list.size() < ENTITYLIM) {list.add(e); score++;} }
-	public synchronized int cycle() {
-		if(sp.audioPos() > sp.sze()-1) return 1;
+	public synchronized boolean cycle() {
+		if(sp.audioPos() >= sp.sze() || !list.contains(player)) {
+			return false;
+		}
 		if(previousCycle == -1) previousCycle = System.currentTimeMillis()-1;
 		float f = (System.currentTimeMillis()-previousCycle)/1000.0f;
 		previousCycle=System.currentTimeMillis();
@@ -64,13 +67,13 @@ public class Game {
 			float[][] means = sp.bassAnalyze();
 			if(means != null) {
 				if(means[0][0] > (means[1][0]+means[2][0]+0.85)) {
-					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 150), 1));
+					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 200), 1));
 				}
 				if(means[0][1] > (means[1][1]+means[2][1]+0.85)) {
-					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 175), 3));
+					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 225), 3));
 				}
 				if(means[0][2] > means[1][2]+means[2][2]+0.85) {
-					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 200), 0));
+					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 250), 0));
 				}
 			}
 			float cnt[][] = sp.trebleAnalyze();
@@ -97,14 +100,18 @@ public class Game {
 			}
 			updateFlag = false;
 		}
-		return newlist.contains(player)? 0:-1;
+		return true;
 	}
 	public synchronized void repaint(Graphics g) {
-		g.drawImage(backgroundImage, 0, 0, null);
+		if(!list.contains(player)) {
+			g.drawString("ded. ESC to return to menu", width/2, height/2);
+			return;
+		}
 		int window = 4096;
-		sp.fftNow(window, 0);
-		updateFlag = true;
 		if(sp.audioPos()+window < sp.sze()) {
+			g.drawImage(backgroundImage, 0, 0, null);
+			sp.fftNow(window, 0);
+			updateFlag = true;
 			float[] data = sp.fftget(0); window = data.length/2;
 			double coef = width/Math.log(window);
 			
@@ -132,10 +139,13 @@ public class Game {
 					g.drawLine(lg, height-(int)(data[i]-tmpdata[i])-50, lgp1, height-(int)(data[i+1]-tmpdata[i+1])-50);
 				}
 			} catch(NullPointerException e) {}
+			for(Entity e: list) e.repaint(g);
+			faucet.repaint(g);
+			sweeper.repaint(g);
 		}
-		for(Entity e: list) e.repaint(g);
-		faucet.repaint(g);
-		sweeper.repaint(g);
+		else {
+			g.drawString("win. ESC to return to menu", width/2, height/2);
+		}
 	}
 	public long getScore() {return score;}
 }

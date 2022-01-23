@@ -66,6 +66,7 @@ public class SoundProcessor {
 	int sze() {return data[0].length;}
 	
 	void play() {audio.start();}
+	void stop() {audio.stop();}
 	int audioPos() {return audio.getFramePosition();}
 	int channels() {return af.getChannels();}
 	

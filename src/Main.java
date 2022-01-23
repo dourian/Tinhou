@@ -24,6 +24,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	static Stack navigation;
 	boolean usingMouse;
 	static String fileName;
+	Thread gamethread;
 
 	final int HOME=0, PLAY = 1, LEADERBOARD = 2, SETTINGSMOUSE = 3, PLAYBUTTON = 4, LEADERBUTTON = 5, SETTINGSBUTTON = 6, SETTINGSKEYBOARD = 7;
 	static int gameState = 0;
@@ -35,7 +36,6 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		}
 		usingMouse = true;
 		
-		game = new Game(700, 1000, usingMouse, fileName);
 
 		navigation = new Stack <Integer> ();
 		navigation.add(HOME);
@@ -51,7 +51,6 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 
 		addMouseListener (this);
 		frame.addKeyListener (this);
-
 		score.create();
 		//		for (score s: score.ts)System.out.println(s);
 	}
@@ -75,7 +74,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			update(g, gameState);
 		}
 		else {
-			game.repaint(g);
+			if(game != null) game.repaint(g);
 		}
 	}
 
@@ -151,25 +150,33 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 
 	@Override
 	public void run() {
-		playGame();
-	}
-
-	public void playGame() {
+		removeMouseListener(this);
+		frame.removeKeyListener(this);
+		removeKeyListener(this);
+		game = new Game(700, 1000, usingMouse, fileName);
 		if(usingMouse) addMouseMotionListener((MouseMotionListener) game.getListener());
 		else addKeyListener((KeyListener) game.getListener());
 		game.playAudio();
 		requestFocus();
 		int state = 0;
-		while((state = game.cycle())==0) repaint();
-		
+		while(game.cycle()) {
+			repaint();
+		}
+		game.stopAudio();
+		if(usingMouse) removeMouseMotionListener((MouseMotionListener) game.getListener());
+		else removeKeyListener((KeyListener) game.getListener());
+		addMouseListener(this);
+		addKeyListener(this);
 	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (buttonTracker(e.getX(), e.getY())==PLAY) {
 			gameState = PLAY;
 			navigation.push(PLAY);
 			repaint();
-			new Thread((Runnable) panel).start();
+			gamethread = new Thread((Runnable) panel);
+			gamethread.start();
 		}
 		else if (buttonTracker(e.getX(), e.getY())==LEADERBOARD) {
 			gameState = LEADERBOARD;
