@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 public abstract class Player extends Entity {
 	protected int HP, speed;
 	Player(Complex position) throws IOException {
-		super(position, new Complex(0, 0), 10, ImageIO.read(new File("character.png")));
+		super(position, new Complex(0, 0), 10, ImageIO.read(new File("player.png")));
 		rad = icon.getHeight(null)/2;
 		HP = 1; speed = 300;
 	}
