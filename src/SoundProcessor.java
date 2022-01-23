@@ -114,7 +114,7 @@ public class SoundProcessor {
 			float cnt[][] = new float[data.length][12];
 			double mult = 44.1e3f/len/2;
 			double base = 16.35, log2_12 = Math.log(1.0594630943592953);
-			for(int i = (int)base; i < data.length; i++) {
+			for(int i = (int)base+1; i < data.length; i++) {
 				for(int i2 = 16; i2 < 512; i2++) {
 					int idx = (int)((Math.log(i/base)/log2_12+0.5)%12);
 					cnt[i][idx] += data[i][i2];
