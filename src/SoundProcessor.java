@@ -86,9 +86,9 @@ public class SoundProcessor {
 		int len = Math.min(Math.min(data[0].length, data[1].length), Math.min(data[2].length, data[2].length));
 		if(len == 4096) {
 			len /= 2;
-			float[][] means = new float[data.length][2];
+			float[][] means = new float[data.length][3];
 			for(int i = 0; i < means.length; i++)
-				for(int i2 = 1; i2 < 25; i2++) means[i][i2<16?0:1] += data[i][i2]/25;
+				for(int i2 = 1; i2 < 25; i2++) means[i][i2<8?0:(i2<10?1:2)] += data[i][i2]/25;
 			return means;
 		}
 		return null;
@@ -98,10 +98,28 @@ public class SoundProcessor {
 		int len = Math.min(Math.min(data[0].length, data[1].length), Math.min(data[2].length, data[2].length));
 		if(len == 4096) {
 			len /= 2;
-			float cnt[][] = new float[data.length][200];
+			float cnt[][] = new float[data.length][1000];
 			for(int i = 0; i < data.length; i++)
 				for(int i2 = 256; i2 < len; i2++)
 					cnt[i][(int)data[i][i2]]++;
+			return cnt;
+		}
+		return null;
+	}
+	float[][] midAnalyze() {
+		float[][] data = {fftget(0), fftget(-1), fftget(-2)};
+		int len = Math.min(Math.min(data[0].length, data[1].length), Math.min(data[2].length, data[2].length));
+		if(len == 4096) {
+			len /= 2;
+			float cnt[][] = new float[data.length][12];
+			double mult = 44.1e3f/len/2;
+			double base = 16.35, log2_12 = Math.log(1.0594630943592953);
+			for(int i = 0; i < data.length; i++) {
+				for(int i2 = 16; i2 < 512; i2++) {
+					int idx = (int)((Math.log(i/base)/log2_12+0.5)%12);
+					cnt[i][idx] += data[i][i2];
+				}
+			}
 			return cnt;
 		}
 		return null;

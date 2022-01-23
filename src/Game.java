@@ -55,17 +55,20 @@ public class Game {
 		}
 		list = newlist;
 		for(Entity e: list) if(e != player && e.collides(player)) player.hit(1);
-		sweeper.setVel(player.pos().minus(sweeper.pos()).mult(0.1));
+		sweeper.setVel(player.pos().minus(sweeper.pos()).mult(0.04));
 		
 		//add bullets
 		if(updateFlag) {
 			float[][] means = sp.bassAnalyze();
 			if(means != null) {
-				if(means[0][0] > (means[1][0]+means[2][0]+0.65)) {
+				if(means[0][0] > (means[1][0]+means[2][0]+0.85)) {
 					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 150), 1));
 				}
-				if(means[0][1] > (means[1][1]+means[2][1]+0.65)) {
-					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 200), 3));
+				if(means[0][1] > (means[1][1]+means[2][1]+0.85)) {
+					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 175), 3));
+				}
+				if(means[0][2] > means[1][2]+means[2][2]+0.85) {
+					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 200), 0));
 				}
 			}
 			float cnt[][] = sp.trebleAnalyze();
@@ -78,7 +81,14 @@ public class Game {
 					frac[i][0] /= frac[i][1];
 				}
 				if(frac[0][0] > (frac[1][0] + frac[2][0])/2 + 0.1) {
-					for(int i = 0; i < frac[0][0]/2; i++) addEntity(new Bullet(faucet.pos(), Complex.polar(Math.random()*Math.PI*2, 275), frac[0][0]>2?2:4));
+					for(int i = 0; i < frac[0][0]/3; i++) addEntity(new Bullet(faucet.pos(), Complex.polar(Math.random()*Math.PI*2, 275), frac[0][0]>1.9?2:4));
+				}
+			}
+			cnt = sp.midAnalyze();
+			if(cnt != null) {
+				for(int i = 0; i < cnt[0].length; i++) {
+					if(cnt[0][i] > 100)
+						addEntity(new Bullet(faucet.pos(), Complex.polar(Math.PI*2*i/12, 300), i%6));
 				}
 			}
 			updateFlag = false;
