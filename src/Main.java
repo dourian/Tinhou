@@ -206,7 +206,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	public void mouseMoved(MouseEvent e) { }
 	public void keyTyped(KeyEvent e) {
 		if (gameState == SETTINGSMOUSE || gameState ==SETTINGSKEYBOARD) {
-			if(e.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
+			if(e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && e.getKeyChar() != KeyEvent.VK_ESCAPE) {
 				if (e.getKeyChar()==KeyEvent.VK_BACK_SPACE && fileName.length() > 0)fileName = fileName.substring(0, fileName.length()-1);
 				else if (e.getKeyChar()==KeyEvent.VK_ENTER) {
 					game = new Game(700, 1000, usingMouse, fileName);
