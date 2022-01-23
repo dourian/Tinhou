@@ -12,6 +12,7 @@ public class Game {
 	boolean updateFlag;
 	private Player player;
 	private BlackHole faucet, sweeper;
+	private double faucetarg;
 	private int height, width;
 	private long previousCycle;
 	private long score;
@@ -35,9 +36,8 @@ public class Game {
 		} catch (IOException e) { e.printStackTrace(); }
 		
 		try {
-			faucet = new BlackHole(new Complex(w/2,h/2));
+			faucet = new BlackHole(new Complex(w/2,h/5)); faucetarg = 0;
 			sweeper = new BlackHole(new Complex(w/2, h/2));
-			list.add(faucet); list.add(sweeper);
 		} catch (IOException e) { e.printStackTrace(); }
 	}
 	public Player getListener() { return player; }
@@ -53,6 +53,7 @@ public class Game {
 			boolean corrected = e.correctPos(height, width);
 			if(e instanceof Bullet && corrected) newlist.remove(newlist.size()-1);
 		}
+		sweeper.cycle(f); faucetarg += f;
 		list = newlist;
 		for(Entity e: list) if(e != player && e.collides(player)) player.hit(1);
 		sweeper.setVel(player.pos().minus(sweeper.pos()).mult(0.04));
@@ -81,19 +82,16 @@ public class Game {
 					frac[i][0] /= frac[i][1];
 				}
 				if(frac[0][0] > (frac[1][0] + frac[2][0])/2 + 0.1) {
-					for(int i = 0; i < frac[0][0]/3; i++) addEntity(new Bullet(faucet.pos(), Complex.polar(Math.random()*Math.PI*2, 275), frac[0][0]>1.9?2:4));
+					for(int i = 0; i < frac[0][0]/5; i++) addEntity(new Bullet(faucet.pos(), Complex.polar(Math.random()*Math.PI*2, 275), frac[0][0]>1.75?2:4));
 				}
 			}
-			cnt = sp.midAnalyze();
-			if(cnt != null) {
-				float mx = 0;
-				for(int i = 0; i < cnt[0].length; i++) {
-					cnt[0][i] += cnt[1][i] + cnt[2][i];
-					mx = Math.max(cnt[0][i], mx);
-				}
-				for(int i = 0; i < cnt[0].length; i++) {
-					if(Math.random() < 0.1 && cnt[0][i] > 100)
-						addEntity(new Bullet(faucet.pos(), Complex.polar(Math.PI*2*i/12, 300), i%6));
+			float[] hist = sp.fftget(1), cur = sp.fftget(0);
+			if(hist != null) {
+				for(int i = 1; i < cur.length; i++) {
+					if(Math.random() < 0.07 && cur[i]-hist[i]>30) {
+						double note = Math.log(0.658507740825688*i)/0.05776226504666215;
+						addEntity(new Bullet(faucet.pos(), Complex.polar(faucetarg+note, 300), (int)(7*note)%6));
+					}
 				}
 			}
 			updateFlag = false;
@@ -102,7 +100,6 @@ public class Game {
 	}
 	public synchronized void repaint(Graphics g) {
 		g.drawImage(backgroundImage, 0, 0, null);
-		for(Entity e: list) e.repaint(g);
 		int window = 4096;
 		sp.fftNow(window, 0);
 		updateFlag = true;
@@ -110,7 +107,7 @@ public class Game {
 			float[] data = sp.fftget(0); window = data.length/2;
 			double coef = width/Math.log(window);
 			
-			g.setColor(Color.WHITE);
+			g.setColor(Color.GRAY);
 			//draw visualizer
 			for(int i = 0; i+1 < window; i++) {
 				int lg = (int)(Math.log(i)*coef);
@@ -126,16 +123,18 @@ public class Game {
 			g.drawLine(0, height-100, width, height-100);
 			//draw analysis
 			try {
-				float[][] cnt = sp.midAnalyze();
-				if(cnt != null) {
-					for(int i = 0; i < cnt[0].length; i++) {
-						cnt[0][i] += cnt[1][i] + cnt[2][i];
-						g.fillRect(0, height-5-5*i, (int)cnt[0][i], 5);
-					}
+				float[] tmpdata = sp.fftget(1);
+				g.setColor(Color.DARK_GRAY);
+				for(int i = 0; i+1 < window; i++) {
+					int lg = (int)(Math.log(i)*coef);
+					int lgp1 = (int)(Math.log(i+1)*coef);
+					g.drawLine(lg, height-(int)(data[i]-tmpdata[i])-50, lgp1, height-(int)(data[i+1]-tmpdata[i+1])-50);
 				}
 			} catch(NullPointerException e) {}
 		}
-		
+		for(Entity e: list) e.repaint(g);
+		faucet.repaint(g);
+		sweeper.repaint(g);
 	}
 	public long getScore() {return score;}
 }
