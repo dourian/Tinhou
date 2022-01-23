@@ -43,7 +43,8 @@ public class Game {
 	public Player getListener() { return player; }
 	public void playAudio() {sp.play();}
 	public void addEntity(Entity e) { if(list.size() < ENTITYLIM) {list.add(e); score++;} }
-	public synchronized boolean cycle() {
+	public synchronized int cycle() {
+		if(sp.audioPos() > sp.sze()-1) return 1;
 		if(previousCycle == -1) previousCycle = System.currentTimeMillis()-1;
 		float f = (System.currentTimeMillis()-previousCycle)/1000.0f;
 		previousCycle=System.currentTimeMillis();
@@ -96,7 +97,7 @@ public class Game {
 			}
 			updateFlag = false;
 		}
-		return newlist.contains(player);
+		return newlist.contains(player)? 0:-1;
 	}
 	public synchronized void repaint(Graphics g) {
 		g.drawImage(backgroundImage, 0, 0, null);

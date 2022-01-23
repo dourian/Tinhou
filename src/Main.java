@@ -159,10 +159,9 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		else addKeyListener((KeyListener) game.getListener());
 		game.playAudio();
 		requestFocus();
-		while(true) {
-			game.cycle();
-			repaint();
-		}
+		int state = 0;
+		while((state = game.cycle())==0) repaint();
+		
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
