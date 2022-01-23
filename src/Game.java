@@ -7,7 +7,7 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 public class Game {
-	public final int ENTITYLIM = 50;
+	public final int ENTITYLIM = 150;
 	private Vector<Entity> list;
 	boolean updateFlag;
 	private Player player;
@@ -50,7 +50,8 @@ public class Game {
 		Vector<Entity> newlist = new Vector<Entity>();
 		for(Entity e: list) {
 			if(e.cycle(f)) newlist.add(e);
-			e.correctPos(height, width);
+			boolean corrected = e.correctPos(height, width);
+			if(e instanceof Bullet && corrected) newlist.remove(newlist.size()-1);
 		}
 		list = newlist;
 		for(Entity e: list) if(e != player && e.collides(player)) player.hit(1);
@@ -58,15 +59,26 @@ public class Game {
 		
 		//add bullets
 		if(updateFlag) {
-			float[][] data = {sp.fftget(0), sp.fftget(-1), sp.fftget(-2)};
-			int len = Math.min(Math.min(data[0].length, data[1].length), Math.min(data[2].length, data[2].length));
-			if(len == 4096) {
-				len /= 2;
-				float[][] means = new float[data.length][2];
-				for(int i = 0; i < means.length; i++)
-					for(int i2 = 1; i2 < 20; i2++) means[i][i2<16?0:1] += data[i][i2]/20;
-				if(means[0][0]/(means[1][0]+means[2][0]+0.7) > 1 || means[0][1]/(means[1][1]+means[2][1]+0.7) > 1) {
+			float[][] means = sp.bassAnalyze();
+			if(means != null) {
+				if(means[0][0] > (means[1][0]+means[2][0]+0.65)) {
+					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 150), 1));
+				}
+				if(means[0][1] > (means[1][1]+means[2][1]+0.65)) {
 					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 200), 3));
+				}
+			}
+			float cnt[][] = sp.trebleAnalyze();
+			if(cnt != null) {
+				float frac[][] = new float[cnt.length][2];
+				for(int i = 0; i < cnt.length; i++) {
+					for(int i2 = 0; i2 < cnt[i].length; i2++) {
+						frac[i][0] += cnt[i][i2]*i2; frac[i][1] += cnt[i][i2];
+					}
+					frac[i][0] /= frac[i][1];
+				}
+				if(frac[0][0] > (frac[1][0] + frac[2][0])/2 + 0.1) {
+					for(int i = 0; i < frac[0][0]/2; i++) addEntity(new Bullet(faucet.pos(), Complex.polar(Math.random()*Math.PI*2, 275), frac[0][0]>2?2:4));
 				}
 			}
 			updateFlag = false;
@@ -76,21 +88,41 @@ public class Game {
 	public synchronized void repaint(Graphics g) {
 		g.drawImage(backgroundImage, 0, 0, null);
 		for(Entity e: list) e.repaint(g);
-		//TODO draw background and music visualizer and ui and stuff
 		int window = 4096;
 		sp.fftNow(window, 0);
 		updateFlag = true;
 		if(sp.audioPos()+window < sp.sze()) {
-			int pos = sp.audioPos();
-			float[] data = sp.fftget(0);
-			window = data.length;
+			float[] data = sp.fftget(0); window = data.length/2;
 			double coef = width/Math.log(window);
+			
+			g.setColor(Color.WHITE);
+			//draw visualizer
 			for(int i = 0; i+1 < window; i++) {
 				int lg = (int)(Math.log(i)*coef);
 				int lgp1 = (int)(Math.log(i+1)*coef);
 				g.drawLine(lg, height-(int)(data[i])-50, lgp1, height-(int)(data[i+1])-50);
 			}
+			//draw guidelines
+			for(int i = 1; i < window; i *= 2) {
+				g.drawLine((int)(Math.log(i)*coef), height, (int)(Math.log(i)*coef), height-100);
+				g.drawString(Integer.toString(i), (int)(Math.log(i)*coef)-5, height-110);
+			}
+			g.drawLine(0, height-50, width, height-50);
+			g.drawLine(0, height-100, width, height-100);
+			//draw analysis
+			try {
+				float[][] B = sp.trebleAnalyze();
+				float num = 0, denom = 0;
+				for(int i = 0; i < 200; i++) {
+					g.fillRect(0, height-i-150, (int)B[0][i]/3, 2);
+					num += B[0][i] * i; denom += B[0][i];
+				}
+				g.setColor(Color.RED);
+				g.fillRect(0,  height-(int)(num/denom)-150, 10, 2);
+				g.setColor(Color.WHITE);
+			} catch(NullPointerException e) {}
 		}
+		
 	}
 	public long getScore() {return score;}
 }

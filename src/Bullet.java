@@ -19,7 +19,7 @@ public class Bullet extends Entity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			radii[i] = (double)icons[i].getHeight(null)/2;
+			radii[i] = (double)icons[i].getWidth(null)/2;
 		}
 	}
 	

@@ -73,12 +73,37 @@ public class SoundProcessor {
 		pointer++; pointer %= 5;
 		if(interp == 0) fftdata[pointer] = DFT.fFFT(getsubdata(0, pos, pos+window));
 		else fftdata[pointer] = DFT.fFFT(getsubdata_interp(0, pos, pos+window+1, interp));
-		float lg = 100<<(int)(Math.log(window)/Math.log(2));
+		float lg = (float) ((500<<(int)Math.log(window))/Math.log(1.5));
 		for(int i = 0; i <fftdata[pointer].length; i++) {
 			fftdata[pointer][i] /= lg / Math.log(i);
 		}
 	}
 	float[] fftget(int idx) {
 		return fftdata[((pointer+idx)%5+5)%5];
+	}
+	float[][] bassAnalyze() {
+		float[][] data = {fftget(0), fftget(-1), fftget(-2)};
+		int len = Math.min(Math.min(data[0].length, data[1].length), Math.min(data[2].length, data[2].length));
+		if(len == 4096) {
+			len /= 2;
+			float[][] means = new float[data.length][2];
+			for(int i = 0; i < means.length; i++)
+				for(int i2 = 1; i2 < 25; i2++) means[i][i2<16?0:1] += data[i][i2]/25;
+			return means;
+		}
+		return null;
+	}
+	float[][] trebleAnalyze() {
+		float[][] data = {fftget(0), fftget(-1), fftget(-2)};
+		int len = Math.min(Math.min(data[0].length, data[1].length), Math.min(data[2].length, data[2].length));
+		if(len == 4096) {
+			len /= 2;
+			float cnt[][] = new float[data.length][200];
+			for(int i = 0; i < data.length; i++)
+				for(int i2 = 256; i2 < len; i2++)
+					cnt[i][(int)data[i][i2]]++;
+			return cnt;
+		}
+		return null;
 	}
 }

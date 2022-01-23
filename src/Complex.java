@@ -5,7 +5,7 @@ import java.util.Objects;
  */
 public class Complex implements Comparable<Complex> {
 	private double re, im;
-	private final double EPS = 1e-6;
+	private final double EPS = 1e-4;
 	
 	public Complex(double real, double imag) {re = real; im = imag;}
 	public static Complex polar(double arg, double mag) {return new Complex(Math.cos(arg)*mag, Math.sin(arg)*mag);}
