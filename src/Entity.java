@@ -34,7 +34,7 @@ public abstract class Entity {
 	public abstract boolean cycle(float f);
 	public void repaint(Graphics g) {
 		
-		g.drawImage(icon, (int)(pos.real()-rad),(int)(pos.imag()-rad), null);
-		//g.drawOval((int)(pos.real()-rad), (int)(pos.imag()-rad), (int)(2*rad), (int)(2*rad)); //DEBUG
+		g.drawImage(icon, (int)(pos.real()-icon.getWidth(null)/2),(int)(pos.imag()-icon.getHeight(null)/2), null);
+		g.drawOval((int)(pos.real()-rad), (int)(pos.imag()-rad), (int)(2*rad), (int)(2*rad)); //DEBUG
 	}
 }
