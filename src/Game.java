@@ -7,7 +7,7 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 public class Game {
-	public final int ENTITYLIM = 150;
+	public final int ENTITYLIM = 100;
 	private Vector<Entity> list;
 	boolean updateFlag;
 	private Player player;
@@ -86,8 +86,13 @@ public class Game {
 			}
 			cnt = sp.midAnalyze();
 			if(cnt != null) {
+				float mx = 0;
 				for(int i = 0; i < cnt[0].length; i++) {
-					if(cnt[0][i] > 10)
+					cnt[0][i] += cnt[1][i] + cnt[2][i];
+					mx = Math.max(cnt[0][i], mx);
+				}
+				for(int i = 0; i < cnt[0].length; i++) {
+					if(Math.random() < 0.1 && cnt[0][i] > 100)
 						addEntity(new Bullet(faucet.pos(), Complex.polar(Math.PI*2*i/12, 300), i%6));
 				}
 			}
@@ -121,15 +126,13 @@ public class Game {
 			g.drawLine(0, height-100, width, height-100);
 			//draw analysis
 			try {
-				float[][] B = sp.trebleAnalyze();
-				float num = 0, denom = 0;
-				for(int i = 0; i < 200; i++) {
-					g.fillRect(0, height-i-150, (int)B[0][i]/3, 2);
-					num += B[0][i] * i; denom += B[0][i];
+				float[][] cnt = sp.midAnalyze();
+				if(cnt != null) {
+					for(int i = 0; i < cnt[0].length; i++) {
+						cnt[0][i] += cnt[1][i] + cnt[2][i];
+						g.fillRect(0, height-5-5*i, (int)cnt[0][i], 5);
+					}
 				}
-				g.setColor(Color.RED);
-				g.fillRect(0,  height-(int)(num/denom)-150, 10, 2);
-				g.setColor(Color.WHITE);
 			} catch(NullPointerException e) {}
 		}
 		

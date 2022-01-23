@@ -10,7 +10,7 @@ public abstract class Player extends Entity {
 	Player(Complex position) throws IOException {
 		super(position, new Complex(0, 0), 10, ImageIO.read(new File("player.png")));
 		rad = icon.getHeight(null)/2;
-		HP = 1; speed = 300;
+		HP = 1; speed = 500;
 	}
 	public boolean cycle(float f) {
 		Complex rvel = new Complex(vel.real(),vel.imag());
@@ -32,25 +32,25 @@ class PlayerKeyboard extends Player implements KeyListener {
 		switch(e.getKeyCode()) {
 		case KeyEvent.VK_W:
 			if(!W) {
-				vel = vel.plus(new Complex(0, -100));
+				vel = vel.plus(new Complex(0, -speed));
 				W = true;
 			}
 			break;
 		case KeyEvent.VK_A:
 			if(!A) {
-				vel = vel.plus(new Complex(-100, 0));
+				vel = vel.plus(new Complex(-speed, 0));
 				A = true;
 			}
 			break;
 		case KeyEvent.VK_S:
 			if(!S) {
-				vel = vel.plus(new Complex(0, 100));
+				vel = vel.plus(new Complex(0, speed));
 				S = true;
 			}
 			break;
 		case KeyEvent.VK_D:
 			if(!D) {
-				vel = vel.plus(new Complex(100, 0));
+				vel = vel.plus(new Complex(speed, 0));
 				D = true;
 			}
 			break;
@@ -60,25 +60,25 @@ class PlayerKeyboard extends Player implements KeyListener {
 		switch(e.getKeyCode()) {
 		case KeyEvent.VK_W:				
 			if(W) {
-				vel = vel.minus(new Complex(0, -100));
+				vel = vel.minus(new Complex(0, -speed));
 				W = false;
 			}
 			break;
 		case KeyEvent.VK_A:
 			if(A) {
-				vel = vel.minus(new Complex(-100, 0));
+				vel = vel.minus(new Complex(-speed, 0));
 				A = false;
 			}
 			break;
 		case KeyEvent.VK_S:
 			if(S) {
-				vel = vel.minus(new Complex(0, 100));
+				vel = vel.minus(new Complex(0, speed));
 				S = false;
 			}
 			break;
 		case KeyEvent.VK_D:
 			if(D) {
-				vel = vel.minus(new Complex(100, 0));
+				vel = vel.minus(new Complex(speed, 0));
 				D = false;
 			}
 			break;
