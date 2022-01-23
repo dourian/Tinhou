@@ -87,7 +87,7 @@ public class Game {
 			cnt = sp.midAnalyze();
 			if(cnt != null) {
 				for(int i = 0; i < cnt[0].length; i++) {
-					if(cnt[0][i] > 100)
+					if(cnt[0][i] > 10)
 						addEntity(new Bullet(faucet.pos(), Complex.polar(Math.PI*2*i/12, 300), i%6));
 				}
 			}
