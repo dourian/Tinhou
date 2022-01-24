@@ -4,7 +4,7 @@ import java.util.Objects;
  * basic complex number that supports arithmetic operations. 
  */
 public class Complex implements Comparable<Complex> {
-	private double re, im;
+	private double re, im;			//real and imaginary component of complex number
 	private final double EPS = 1e-4;
 	
 	public Complex(double real, double imag) {re = real; im = imag;}

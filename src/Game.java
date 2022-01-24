@@ -149,4 +149,5 @@ public class Game {
 		}
 	}
 	public long getScore() {return score;}
+	public boolean isWin() {return player.getHP() > 0;}
 }
