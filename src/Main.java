@@ -11,10 +11,10 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.Vector;
-import java.awt.event.KeyEvent;
+
 import javax.swing.*;
 
-public class Main extends JPanel implements Runnable, MouseListener, KeyListener {
+public class Main extends JPanel implements Runnable, MouseListener, KeyListener, MouseMotionListener {
 
 	Game game;
 	static JPanel panel;
@@ -29,6 +29,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	static String name = "default";
 	static String date = "01242022";
 	Thread gamethread;
+	static int paintedbutton = 0;
 
 	final int HOME=0, PLAY = 1, LEADERBOARD = 2, SETTINGSMOUSE = 3, PLAYBUTTON = 4, LEADERBUTTON = 5, SETTINGSBUTTON = 6, SETTINGSKEYBOARD = 7, NAMEANDDATE = 8;
 	static int gameState = 0;
@@ -39,7 +40,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			fileName="keshi.wav";
 		}
 		usingMouse = true;
-		
+
 
 		navigation = new Stack <Integer> ();
 		navigation.add(HOME);
@@ -53,9 +54,10 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		images[SETTINGSBUTTON] = Toolkit.getDefaultToolkit().getImage("settingsbuttondark.png");
 		images[SETTINGSKEYBOARD] = Toolkit.getDefaultToolkit().getImage("settingsscreenkeyboard.png");
 		images[NAMEANDDATE] = Toolkit.getDefaultToolkit().getImage("highscore.png");
-		
+
 		addMouseListener (this);
 		frame.addKeyListener (this);
+		addMouseMotionListener(this);
 		score.create();
 		//		for (score s: score.ts)System.out.println(s);
 	}
@@ -123,6 +125,22 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			g.drawString(name, 70, 295);
 			g.drawString(date, 70, 485);
 		}
+
+	}
+	public void updateButton(Graphics g, int state) {
+		if (state==PLAYBUTTON) {
+			g.drawImage(images[PLAYBUTTON], 0,0,1000,700, this);
+		}
+		else if (state==LEADERBUTTON) {
+			g.drawImage(images[LEADERBUTTON], 0,0,1000,700, this);
+		}
+		else if (state==SETTINGSBUTTON) {
+			g.drawImage(images[SETTINGSBUTTON], 0,0,1000,700, this);
+		}
+		else {
+			update(g,HOME);
+		}
+
 	}
 
 	public void displayLeaderboard(Graphics g) {
@@ -166,31 +184,32 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	}
 
 	@Override
-    public void run(){
-        removeMouseListener(this);
-        frame.removeKeyListener(this);
-        removeKeyListener(this);
-        frame.setPreferredSize(new Dimension(1614, 938));
-        frame.pack();
-        game = new Game(900, 1600, usingMouse, fileName);
-        if(usingMouse) addMouseMotionListener((MouseMotionListener) game.getListener());
-        else addKeyListener((KeyListener) game.getListener());
-        game.playAudio();
-        requestFocus();
-        int state = 0;
-        while(game.cycle()) {
-            repaint();
-        }
-        game.stopAudio();
-        frame.setPreferredSize(new Dimension(1014, 738));
-        frame.pack();
-        if(usingMouse) removeMouseMotionListener((MouseMotionListener) game.getListener());
-        else removeKeyListener((KeyListener) game.getListener());
-        addMouseListener(this);
-        addKeyListener(this);
-    }
+	public void run(){
+		removeMouseListener(this);
+		frame.removeKeyListener(this);
+		removeKeyListener(this);
+		frame.setPreferredSize(new Dimension(1614, 938));
+		frame.pack();
+		game = new Game(900, 1600, usingMouse, fileName);
+		if(usingMouse) addMouseMotionListener((MouseMotionListener) game.getListener());
+		else addKeyListener((KeyListener) game.getListener());
+		game.playAudio();
+		requestFocus();
+		int state = 0;
+		while(game.cycle()) {
+			repaint();
+		}
+		game.stopAudio();
+		frame.setPreferredSize(new Dimension(1014, 738));
+		frame.pack();
+		if(usingMouse) removeMouseMotionListener((MouseMotionListener) game.getListener());
+		else removeKeyListener((KeyListener) game.getListener());
+		addMouseListener(this);
+		addKeyListener(this);
+		addMouseMotionListener(this);
+	}
 
-	
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (buttonTracker(e.getX(), e.getY())==PLAY) {
@@ -225,7 +244,26 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	public void mouseReleased(MouseEvent e) { }
 	public void mouseEntered(MouseEvent e) { }
 	public void mouseExited(MouseEvent e) { }
-	public void mouseMoved(MouseEvent e) { }
+	public void mouseMoved(MouseEvent e) {
+		if (gameState==HOME) {
+			if (buttonTracker(e.getX(), e.getY())==PLAY && paintedbutton!=PLAY) {
+				paintedbutton=PLAY;
+				updateButton(getGraphics(), PLAYBUTTON);
+			}
+			else if (buttonTracker(e.getX(), e.getY())==LEADERBOARD && paintedbutton !=LEADERBUTTON) {
+				paintedbutton=LEADERBUTTON;
+				updateButton(getGraphics(), LEADERBUTTON);
+			}
+			else if ((buttonTracker(e.getX(), e.getY())==SETTINGSMOUSE || buttonTracker(e.getX(), e.getY())==SETTINGSKEYBOARD) && paintedbutton!=SETTINGSKEYBOARD) {
+				paintedbutton = SETTINGSKEYBOARD;
+				updateButton(getGraphics(), SETTINGSBUTTON);
+			}
+			else if (buttonTracker(e.getX(), e.getY())==-1){
+				paintedbutton=HOME;
+				updateButton(getGraphics(), HOME);
+			}
+		}
+	}
 	public void keyTyped(KeyEvent e) {
 		if (gameState == SETTINGSMOUSE || gameState ==SETTINGSKEYBOARD) {
 			if(e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && e.getKeyChar() != KeyEvent.VK_ESCAPE) {
@@ -288,6 +326,12 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			gameState = NAMEANDDATE;
 			repaint();
 		}
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }
 
