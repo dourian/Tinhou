@@ -24,6 +24,9 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	static Stack navigation;
 	boolean usingMouse;
 	static String fileName;
+	static int field = 1;
+	static String name = "default";
+	static String date = "01242022";
 	Thread gamethread;
 
 	final int HOME=0, PLAY = 1, LEADERBOARD = 2, SETTINGSMOUSE = 3, PLAYBUTTON = 4, LEADERBUTTON = 5, SETTINGSBUTTON = 6, SETTINGSKEYBOARD = 7, NAMEANDDATE = 8;
@@ -48,16 +51,17 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		images[LEADERBUTTON] = Toolkit.getDefaultToolkit().getImage("leaderboardbuttondark.png");
 		images[SETTINGSBUTTON] = Toolkit.getDefaultToolkit().getImage("settingsbuttondark.png");
 		images[SETTINGSKEYBOARD] = Toolkit.getDefaultToolkit().getImage("settingsscreenkeyboard.png");
-
+		images[NAMEANDDATE] = Toolkit.getDefaultToolkit().getImage("highscore.png");
+		
 		addMouseListener (this);
 		frame.addKeyListener (this);
 		score.create();
 		//		for (score s: score.ts)System.out.println(s);
 	}
 
-	public static void clearBoard(Graphics g) {
+	public static void clearBoard(Graphics g, int x, int y, int w, int h) {
 		g.setColor(Color.WHITE);
-		g.fillRect(65, 465, 870, 35);
+		g.fillRect(x, y, w, h);
 	}
 
 	public void paintComponent(Graphics g) {
@@ -102,18 +106,30 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 
 		if (state==LEADERBOARD) displayLeaderboard(g);
 		else if (state==SETTINGSMOUSE || state==SETTINGSKEYBOARD) {
-			clearBoard(g);
+			clearBoard(g, 65, 465, 870, 35);
 			g.setColor(Color.black);
 			g.drawString(fileName, 70, 485);
+		}
+		else if (state==NAMEANDDATE && field==1) {
+			clearBoard(g,65, 275, 870, 35);
+			g.setColor(Color.black);
+			g.drawString(name, 70, 295);
+			g.drawString(date, 70, 485);
+		}
+		else if (state==NAMEANDDATE && field==2) {
+			clearBoard(g, 65, 465, 870, 35);
+			g.setColor(Color.black);
+			g.drawString(name, 70, 295);
+			g.drawString(date, 70, 485);
 		}
 	}
 
 	public void displayLeaderboard(Graphics g) {
 		int y = 200;
 		g.setFont(new Font("Courier", Font.PLAIN, 20));
-		g.drawString(String.format("%15s%25s%25s", "Name", "Score", "Date"), 60, 175);
+		g.drawString(String.format("%-25s%-15s%-25s", "Name", "Score", "Date"), 175, 175);
 		for (score s : score.ts) {
-			g.drawString(String.format("%15s%25d%25s", s.getName(),s.getScore(),s.getDate()), 60, y);
+			g.drawString(String.format("%-25s%-15d%-25s", s.getName().trim(),s.getScore(),s.getDate()), 175, y);
 			y+=25;
 		}
 	}
@@ -163,12 +179,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			repaint();
 		}
 		game.stopAudio();
-		try {
-			score.addentry("Dorian", (int)game.getScore(), "01/23/2021");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		if(usingMouse) removeMouseMotionListener((MouseMotionListener) game.getListener());
 		else removeKeyListener((KeyListener) game.getListener());
 		addMouseListener(this);
@@ -221,17 +232,53 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			}
 			update(getGraphics());
 		}
+		else if (gameState == NAMEANDDATE) {
+			if(e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && e.getKeyChar() != KeyEvent.VK_ESCAPE && field==1) {
+				if (e.getKeyChar()==KeyEvent.VK_BACK_SPACE && name.length() > 0)name = name.substring(0, name.length()-1);
+				else if (e.getKeyChar()==KeyEvent.VK_ENTER) {
+					field=2;
+				}
+				else name += e.getKeyChar();
+			}
+			else if(e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && e.getKeyChar() != KeyEvent.VK_ESCAPE && field==2) {
+				if (e.getKeyChar()==KeyEvent.VK_BACK_SPACE && date.length() > 0)date = date.substring(0, date.length()-1);
+				else if (e.getKeyChar()==KeyEvent.VK_ENTER) {
+					field=1;
+					while (navigation.size()> 1) {
+						navigation.pop();
+						gameState = (int) navigation.peek();
+						repaint();
+					}
+					try {
+						score.addentry(name, (int)game.getScore(), date);
+					} catch (FileNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				else date += e.getKeyChar();
+			}
+			update(getGraphics());
+		}
 	}
 	public void keyPressed(KeyEvent e) { }
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode()==KeyEvent.VK_ESCAPE) {
+		if (e.getKeyCode()==KeyEvent.VK_ESCAPE && gameState!=PLAY && gameState!=NAMEANDDATE) {
 			while (navigation.size()> 1) {
 				navigation.pop();
 				gameState = (int) navigation.peek();
 				repaint();
 			}
+		}
+		else if (e.getKeyCode()==KeyEvent.VK_ESCAPE && gameState == PLAY) {
+			while (navigation.size()>1) {
+				navigation.pop();
+			}
+			navigation.push(NAMEANDDATE);
+			gameState = NAMEANDDATE;
+			repaint();
 		}
 	}
 }
