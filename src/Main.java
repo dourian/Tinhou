@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.BitSet;
 import java.util.Comparator;
@@ -230,6 +231,9 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			if(e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && e.getKeyChar() != KeyEvent.VK_ESCAPE) {
 				if (e.getKeyChar()==KeyEvent.VK_BACK_SPACE && fileName.length() > 0)fileName = fileName.substring(0, fileName.length()-1);
 				else if (e.getKeyChar()==KeyEvent.VK_ENTER) {
+					try {
+						SoundProcessor sp = new SoundProcessor(fileName);
+					} catch (IOException ee) { fileName = "keshi.wav";}
 					game = new Game(700, 1000, usingMouse, fileName);
 				}
 				else fileName += e.getKeyChar();
