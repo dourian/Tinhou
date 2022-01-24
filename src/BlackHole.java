@@ -3,12 +3,10 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-/***
- * @author maxwell
- * Jan 24, 2022
- */
+
 /**
  * @author maxwell
+ * Jan 24, 2022
  * blackhole object. however, instead of gravitating objects, it spews them out. kinda like the opposite of a blackhole. oops. 
  */
 public class BlackHole extends Entity {

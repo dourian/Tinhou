@@ -1,18 +1,24 @@
 import java.io.*;
 import java.util.Arrays;
-
 import javax.sound.sampled.*;
+
 /**
- * @author max13
+ * @author maxwell
+ * Jan 24, 2022
  * sound processor class handles the input and output of sound files into audio and extracts characteristics of songs that can be interpreted as bullet patterns
  */
 public class SoundProcessor {
 	private AudioFormat af;
-	private Clip audio;
-	private short[][] data;
-	float[][] fftdata;
-	float[] historic;
-	int pointer;
+	private Clip audio;		//used to play audio file itself
+	private short[][] data;	//raw audio data
+	float[][] fftdata;		//previous fft outputs in circular array
+	float[] historic;		//historic averages for fft outputs
+	int pointer;			//pointer used in circular array
+	/**
+	 * initializes audio processor
+	 * @param fileName audio file
+	 * @throws IOException error reading file
+	 */
 	SoundProcessor(String fileName) throws IOException {
 		AudioInputStream ais = null; audio = null;
 		
@@ -48,9 +54,30 @@ public class SoundProcessor {
 		fftdata = new float[5][1];
 		pointer = 0;
 	}
-	
+	/**
+	 * gets data
+	 * @param x index
+	 * @param y index
+	 * @return data[x][y]
+	 */
 	short get(int x, int y) {return data[x][y];}
+	/**
+	 * gets subarray of data
+	 * @param x index
+	 * @param a begin
+	 * @param b end
+	 * @return data[x][[a,b)]
+	 */
 	short[] getsubdata(int x, int a, int b) {return Arrays.copyOfRange(data[x],a,b);}
+	/**
+	 * gets subarray of data (with interpolation)
+	 * uses quadratic interpolation
+	 * @param x index
+	 * @param a begin
+	 * @param b end
+	 * @param f interpolation quotient
+	 * @return data[x][[a,b)] with x interpolation
+	 */
 	int[] getsubdata_interp(int x, int a, int b, int f) {
 		short[] arr = getsubdata(x, a, b);
 		int[] ret = new int[(arr.length-1)*f];
@@ -63,13 +90,31 @@ public class SoundProcessor {
 		}
 		return ret;
 	}
+	/**
+	 * @return length of data
+	 */
 	int sze() {return data[0].length;}
-	
+	/**
+	 * plays audio
+	 */
 	void play() {audio.start();}
+	/**
+	 * stops audio
+	 */
 	void stop() {audio.stop();}
+	/**
+	 * @return position of clip
+	 */
 	int audioPos() {return audio.getFramePosition();}
+	/**
+	 * @return # of channels
+	 */
 	int channels() {return af.getChannels();}
-	
+	/**
+	 * ffts current audio position
+	 * @param window fft window
+	 * @param interp interpolation quotient
+	 */
 	void fftNow(int window, int interp) {
 		int pos = audioPos();
 		for(int i = 0; i < fftdata[pointer].length; i++)
@@ -82,10 +127,20 @@ public class SoundProcessor {
 			fftdata[pointer][i] /= lg / Math.log(i);
 		}
 	}
+	/**
+	 * accesses fft data
+	 * @param idx index, 0 for current fft, negative for historic fft, 1 for historic averages
+	 * @return fft data
+	 */
 	float[] fftget(int idx) {
 		if(idx == 1) return historic;
 		return fftdata[((pointer+idx)%5+5)%5];
 	}
+	//disclaimer: i have no idea what the ranges for treble and bass are. im just using these terms to describe the functionalities of the methods. 
+	/**
+	 * analyzes bass data
+	 * @return 2d array representing bass data used in bullet patterns
+	 */
 	float[][] bassAnalyze() {
 		float[][] data = {fftget(0), fftget(-1), fftget(-2)};
 		int len = Math.min(Math.min(data[0].length, data[1].length), Math.min(data[2].length, data[2].length));
@@ -98,6 +153,10 @@ public class SoundProcessor {
 		}
 		return null;
 	}
+	/**
+	 * analyzes treble data
+	 * @return 2d array representing treble data used in bullet patterns
+	 */
 	float[][] trebleAnalyze() {
 		float[][] data = {fftget(0), fftget(-1), fftget(-2)};
 		int len = Math.min(Math.min(data[0].length, data[1].length), Math.min(data[2].length, data[2].length));

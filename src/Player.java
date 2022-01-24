@@ -4,13 +4,11 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-/***
- * @author maxwell
- * Jan 24, 2022
- */
+
 /**
  * base abstract player class
  * @author maxwell
+ * Jan 24, 2022
  * contains HP and speed limit
  */
 public abstract class Player extends Entity {
@@ -49,6 +47,7 @@ public abstract class Player extends Entity {
 /**
  * player class that uses keyboard for input
  * @author maxwell
+ * Jan 24, 2022
  */
 class PlayerKeyboard extends Player implements KeyListener {
 	private boolean W,A,S,D; //whether or not W, A, S, and D are being held
@@ -129,6 +128,7 @@ class PlayerKeyboard extends Player implements KeyListener {
 /**
  * player class that uses mouse for input
  * @author maxwell
+ * Jan 24, 2022
  */
 class PlayerMouse extends Player implements MouseMotionListener {
 	private Complex targ; //target position (position of mouse)
