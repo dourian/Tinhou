@@ -26,7 +26,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	static String fileName;
 	Thread gamethread;
 
-	final int HOME=0, PLAY = 1, LEADERBOARD = 2, SETTINGSMOUSE = 3, PLAYBUTTON = 4, LEADERBUTTON = 5, SETTINGSBUTTON = 6, SETTINGSKEYBOARD = 7;
+	final int HOME=0, PLAY = 1, LEADERBOARD = 2, SETTINGSMOUSE = 3, PLAYBUTTON = 4, LEADERBUTTON = 5, SETTINGSBUTTON = 6, SETTINGSKEYBOARD = 7, NAMEANDDATE = 8;
 	static int gameState = 0;
 
 	Main() throws FileNotFoundException {
@@ -149,7 +149,7 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	}
 
 	@Override
-	public void run() {
+	public void run(){
 		removeMouseListener(this);
 		frame.removeKeyListener(this);
 		removeKeyListener(this);
@@ -163,6 +163,12 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			repaint();
 		}
 		game.stopAudio();
+		try {
+			score.addentry("Dorian", (int)game.getScore(), "01/23/2021");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(usingMouse) removeMouseMotionListener((MouseMotionListener) game.getListener());
 		else removeKeyListener((KeyListener) game.getListener());
 		addMouseListener(this);

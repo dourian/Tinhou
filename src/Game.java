@@ -145,6 +145,7 @@ public class Game {
 		}
 		else {
 			g.drawString("win. ESC to return to menu", width/2, height/2);
+			
 		}
 	}
 	public long getScore() {return score;}
