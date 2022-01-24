@@ -21,7 +21,7 @@ public class Game {
 	Game(int h, int w, boolean mouse, String file) {
 		updateFlag = false; score = 0;
 		try {
-			backgroundImage = ImageIO.read(new File("background_scaled.png"));
+			backgroundImage = ImageIO.read(new File("background_scaled_1600_900.png"));
 		} catch (IOException e1) { e1.printStackTrace(); }
 		height = h; width = w;
 		list = new Vector<Entity>();
@@ -36,7 +36,7 @@ public class Game {
 		} catch (IOException e) { e.printStackTrace(); }
 		
 		try {
-			faucet = new BlackHole(new Complex(w/2,h/5)); faucetarg = 0;
+			faucet = new BlackHole(new Complex(w/2,h/2)); faucetarg = 0;
 			sweeper = new BlackHole(new Complex(w/2, h/2));
 		} catch (IOException e) { e.printStackTrace(); }
 	}
@@ -45,6 +45,7 @@ public class Game {
 	public void stopAudio() {sp.stop();} 
 	public void addEntity(Entity e) { if(list.size() < ENTITYLIM) {list.add(e); score++;} }
 	public synchronized boolean cycle() {
+		if(!list.contains(player) && player.getHP() > 0) list.add(player); //bandaid
 		if(sp.audioPos() >= sp.sze() || !list.contains(player)) {
 			return false;
 		}
@@ -53,9 +54,9 @@ public class Game {
 		previousCycle=System.currentTimeMillis();
 		Vector<Entity> newlist = new Vector<Entity>();
 		for(Entity e: list) {
-			if(e.cycle(f)) newlist.add(e);
-			boolean corrected = e.correctPos(height, width);
-			if(e instanceof Bullet && corrected) newlist.remove(newlist.size()-1);
+			boolean flag = e.cycle(f);
+			flag = flag && !(e instanceof Bullet && e.correctPos(height, width));
+			if(flag) newlist.add(e);
 		}
 		sweeper.cycle(f); faucetarg += f;
 		list = newlist;

@@ -165,26 +165,30 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	}
 
 	@Override
-	public void run(){
-		removeMouseListener(this);
-		frame.removeKeyListener(this);
-		removeKeyListener(this);
-		game = new Game(700, 1000, usingMouse, fileName);
-		if(usingMouse) addMouseMotionListener((MouseMotionListener) game.getListener());
-		else addKeyListener((KeyListener) game.getListener());
-		game.playAudio();
-		requestFocus();
-		int state = 0;
-		while(game.cycle()) {
-			repaint();
-		}
-		game.stopAudio();
+    public void run(){
+        removeMouseListener(this);
+        frame.removeKeyListener(this);
+        removeKeyListener(this);
+        frame.setPreferredSize(new Dimension(1614, 938));
+        frame.pack();
+        game = new Game(900, 1600, usingMouse, fileName);
+        if(usingMouse) addMouseMotionListener((MouseMotionListener) game.getListener());
+        else addKeyListener((KeyListener) game.getListener());
+        game.playAudio();
+        requestFocus();
+        int state = 0;
+        while(game.cycle()) {
+            repaint();
+        }
+        game.stopAudio();
+        frame.setPreferredSize(new Dimension(1014, 738));
+        frame.pack();
+        if(usingMouse) removeMouseMotionListener((MouseMotionListener) game.getListener());
+        else removeKeyListener((KeyListener) game.getListener());
+        addMouseListener(this);
+        addKeyListener(this);
+    }
 
-		if(usingMouse) removeMouseMotionListener((MouseMotionListener) game.getListener());
-		else removeKeyListener((KeyListener) game.getListener());
-		addMouseListener(this);
-		addKeyListener(this);
-	}
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {

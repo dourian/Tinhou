@@ -5,28 +5,65 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+/**
+ * base abstract player class
+ * @author maxwell
+ * Jan 24, 2022
+ * contains HP and speed limit
+ */
 public abstract class Player extends Entity {
 	protected int HP, speed;
+	/**
+	 * constructs player object
+	 * @param position initial position of player
+	 * @throws IOException if there was an issue reading icon data
+	 */
 	Player(Complex position) throws IOException {
 		super(position, new Complex(0, 0), 5, ImageIO.read(new File("player_v2.png")));
 		HP = 1; speed = 300;
 	}
+	/**
+	 * generic cycle
+	 * @param f time elapsed since last cycle
+	 * @return if player may still exist (HP > 0)
+	 */
 	public boolean cycle(float f) {
 		Complex rvel = new Complex(vel.real(),vel.imag());
 		if(rvel.abs()>speed*f) rvel = rvel.div(rvel.abs()).mult(speed*f);
 		pos = pos.plus(rvel);
 		return HP > 0;
 	}
+	/**
+	 * @return current HP
+	 */
 	public int getHP() {return HP;}
+	/**
+	 * hits player
+	 * @param val amount of HP to hit for
+	 */
 	public void hit(int val) {HP -= val;}
 }
 
+/**
+ * player class that uses keyboard for input
+ * @author maxwell
+ * Jan 24, 2022
+ */
 class PlayerKeyboard extends Player implements KeyListener {
-	private boolean W,A,S,D;
+	private boolean W,A,S,D; //whether or not W, A, S, and D are being held
+	/**
+	 * constructs player
+	 * @param position initial position of player
+	 * @throws IOException whether or not attempting to get icon has failed
+	 */
 	PlayerKeyboard(Complex position) throws IOException {
 		super(position);W=A=S=D=false;
 	}
 	public void keyTyped(KeyEvent e) { }
+	/**
+	 * key events for player input
+	 * @param e even to to be processed
+	 */
 	public void keyPressed(KeyEvent e) {
 		switch(e.getKeyCode()) {
 		case KeyEvent.VK_W:
@@ -55,6 +92,10 @@ class PlayerKeyboard extends Player implements KeyListener {
 			break;
 		}
 	}
+	/**
+	 * key events for player input
+	 * @param e even to to be processed
+	 */
 	public void keyReleased(KeyEvent e) {
 		switch(e.getKeyCode()) {
 		case KeyEvent.VK_W:				
@@ -84,19 +125,43 @@ class PlayerKeyboard extends Player implements KeyListener {
 		}
 	}
 }
-
+/**
+ * player class that uses mouse for input
+ * @author maxwell
+ * Jan 24, 2022
+ */
 class PlayerMouse extends Player implements MouseMotionListener {
-	private Complex targ;
+	private Complex targ; //target position (position of mouse)
+	/**
+	 * constructs player
+	 * @param position initial position of player
+	 * @throws IOException throws if error with reading player icon
+	 */
 	PlayerMouse(Complex position) throws IOException {
 		super(position); targ = position;
 	}
+	/**
+	 * generic cycle. gravitations position towards targ
+	 * @param f time elapsed since last cycle
+	 * @return if player may still exist (HP > 0)
+	 */
 	public boolean cycle(float f) {
 		vel = targ.minus(pos);
 		if(vel.abs()>speed*f) vel = vel.div(vel.abs()).mult(speed*f);
 		pos = pos.plus(vel);
 		return HP > 0;
 	}
-	public void mouseDragged(MouseEvent e) { }
+	/**
+	 * mouse event for input
+	 * @param e event to be processed
+	 */
+	public void mouseDragged(MouseEvent e) {
+		targ = new Complex(e.getX(),e.getY());
+	}
+	/**
+	 * mouse event for input
+	 * @param e event to be processed
+	 */
 	public void mouseMoved(MouseEvent e) {
 		targ = new Complex(e.getX(),e.getY());
 	}
