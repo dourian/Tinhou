@@ -21,7 +21,7 @@ public class Game {
 	Game(int h, int w, boolean mouse, String file) {
 		updateFlag = false; score = 0;
 		try {
-			backgroundImage = ImageIO.read(new File("background_scaled.png"));
+			backgroundImage = ImageIO.read(new File("background_scaled_1600_900.png"));
 		} catch (IOException e1) { e1.printStackTrace(); }
 		height = h; width = w;
 		list = new Vector<Entity>();
@@ -36,7 +36,7 @@ public class Game {
 		} catch (IOException e) { e.printStackTrace(); }
 		
 		try {
-			faucet = new BlackHole(new Complex(w/2,h/5)); faucetarg = 0;
+			faucet = new BlackHole(new Complex(w/2,h/2)); faucetarg = 0;
 			sweeper = new BlackHole(new Complex(w/2, h/2));
 		} catch (IOException e) { e.printStackTrace(); }
 	}

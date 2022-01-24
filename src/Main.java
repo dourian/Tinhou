@@ -153,7 +153,9 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		removeMouseListener(this);
 		frame.removeKeyListener(this);
 		removeKeyListener(this);
-		game = new Game(700, 1000, usingMouse, fileName);
+		frame.setPreferredSize(new Dimension(1614, 938));
+		frame.pack();
+		game = new Game(900, 1600, usingMouse, fileName);
 		if(usingMouse) addMouseMotionListener((MouseMotionListener) game.getListener());
 		else addKeyListener((KeyListener) game.getListener());
 		game.playAudio();
@@ -163,6 +165,8 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			repaint();
 		}
 		game.stopAudio();
+		frame.setPreferredSize(new Dimension(1014, 738));
+		frame.pack();
 		try {
 			score.addentry("Dorian", (int)game.getScore(), "01/23/2021");
 		} catch (FileNotFoundException e) {
