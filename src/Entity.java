@@ -1,8 +1,11 @@
 import java.awt.Graphics;
 import java.awt.Image;
-
+/***
+ * @author maxwell
+ * Jan 24, 2022
+ */
 /**
- * @author max13
+ * @author maxwell
  * entity class. stores entity data such as position, size, hit detection information, icon
  */
 public abstract class Entity {

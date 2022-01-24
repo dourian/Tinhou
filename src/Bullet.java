@@ -3,8 +3,12 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 
 import javax.imageio.ImageIO;
+/***
+ * @author maxwell
+ * Jan 24, 2022
+ */
 /**
- * @author max13
+ * @author maxwell
  * bullet class. stores bullet data.
  */
 public class Bullet extends Entity {
