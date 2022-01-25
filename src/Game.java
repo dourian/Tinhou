@@ -27,7 +27,7 @@ public class Game {
 	private long score;					//current score
 	private SoundProcessor sp;			//sound processing structure
 	private Image backgroundImage;		//background image
-	private Image images[] = new Image[2];
+	private Image winscreen, losescreen;//win/lose
 	
 	/*
 	 * constructs game object
@@ -40,6 +40,13 @@ public class Game {
 		updateFlag = false; score = 0;
 		try {
 			backgroundImage = ImageIO.read(new File("background_scaled_1600_900.png"));
+			winscreen = ImageIO.read(new File("winscreen_v2.png"));
+			losescreen = ImageIO.read(new File("losescreen_v2.png"));
+			if(Math.random()<0.01)
+				winscreen = ImageIO.read(new File("winscreen.png"));
+			if(Math.random()<0.01)
+				losescreen = ImageIO.read(new File("losescreen.png"));
+			
 		} catch (IOException e1) { e1.printStackTrace(); }
 		height = h; width = w;
 		list = new Vector<Entity>();
@@ -57,9 +64,6 @@ public class Game {
 			faucet = new BlackHole(new Complex(w/2,h/2)); faucetarg = 0;
 			sweeper = new BlackHole(new Complex(w/2, h/2));
 		} catch (IOException e) { e.printStackTrace(); }
-		
-		images[0] = Toolkit.getDefaultToolkit().getImage("losescreen.png");
-		images[1] = Toolkit.getDefaultToolkit().getImage("winscreen.png");
 		
 	}
 	/**
@@ -153,7 +157,7 @@ public class Game {
 	 */
 	public synchronized void repaint(Graphics g) {
 		if(!list.contains(player)) {
-			g.drawString("ded. ESC to return to menu", width/2, height/2);
+			g.drawImage(losescreen, 0, 0, null);
 			return;
 		}
 		int window = 4096;
@@ -198,8 +202,7 @@ public class Game {
 			sweeper.repaint(g);
 		}
 		else {
-			g.drawImage(images[0], 0,0,null);
-			g.drawString("win. ESC to return to menu", width/2, height/2);
+			g.drawImage(winscreen, 0, 0, null);
 			
 		}
 	}
