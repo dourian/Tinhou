@@ -27,7 +27,8 @@ public class Game {
 	private long score;					//current score
 	private SoundProcessor sp;			//sound processing structure
 	private Image backgroundImage;		//background image
-
+	private Image images[] = new Image[2];
+	
 	/*
 	 * constructs game object
 	 * @param h height boundary
@@ -57,8 +58,8 @@ public class Game {
 			sweeper = new BlackHole(new Complex(w/2, h/2));
 		} catch (IOException e) { e.printStackTrace(); }
 		
-//		images[0] = Toolkit.getDefaultToolkit().getImage("losescreen.png");
-//		images[1] = Toolkit.getDefaultToolkit().getImage("winscreen.png");
+		images[0] = Toolkit.getDefaultToolkit().getImage("losescreen.png");
+		images[1] = Toolkit.getDefaultToolkit().getImage("winscreen.png");
 		
 	}
 	/**
@@ -197,7 +198,7 @@ public class Game {
 			sweeper.repaint(g);
 		}
 		else {
-			// g.drawImage(images[0], 0,0,null);
+			g.drawImage(images[0], 0,0,null);
 			g.drawString("win. ESC to return to menu", width/2, height/2);
 			
 		}
