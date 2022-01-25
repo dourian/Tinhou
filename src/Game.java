@@ -6,18 +6,30 @@ import java.io.IOException;
 import java.util.*;
 
 import javax.imageio.ImageIO;
+/**
+ * @author maxwell
+ * Jan 24, 2022
+ * game class that contains all game logic
+ */
 public class Game {
 	public final int ENTITYLIM = 150;
-	private Vector<Entity> list;
-	boolean updateFlag;
-	private Player player;
-	private BlackHole faucet, sweeper;
-	private double faucetarg;
-	private int height, width;
-	private long previousCycle;
-	private long score;
-	private SoundProcessor sp;
-	private Image backgroundImage;
+	private Vector<Entity> list;		//list of entities
+	boolean updateFlag;					//whether or not fft has been updated since last cycle
+	private Player player;				//player entity
+	private BlackHole faucet, sweeper;	//bullet sources - faucet is main source, sweeper follows and targets player to keep player moving
+	private double faucetarg;			//faucet spewing angle
+	private int height, width;			//height and width boundaries of game
+	private long previousCycle;			//time of previous cycle
+	private long score;					//current score
+	private SoundProcessor sp;			//sound processing structure
+	private Image backgroundImage;		//background image
+	/**
+	 * constructs game object
+	 * @param h height boundary
+	 * @param w width boundary
+	 * @param mouse whether or not to use a mouse as input
+	 * @param file sound file to play from
+	 */
 	Game(int h, int w, boolean mouse, String file) {
 		updateFlag = false; score = 0;
 		try {
@@ -40,22 +52,41 @@ public class Game {
 			sweeper = new BlackHole(new Complex(w/2, h/2));
 		} catch (IOException e) { e.printStackTrace(); }
 	}
+	/**
+	 * @return player
+	 */
 	public Player getListener() { return player; }
+	/**
+	 * starts audio
+	 */
 	public void playAudio() {sp.play();}
-	public void stopAudio() {sp.stop();} 
+	/**
+	 * stops audio
+	 */
+	public void stopAudio() {sp.stop();}
+	/**
+	 * adds entity to list.
+	 * entity will not be added if entity limit has been reached. 
+	 * @param e entity to be added
+	 */
 	public void addEntity(Entity e) { if(list.size() < ENTITYLIM) {list.add(e); score++;} }
+	/**
+	 * main game logic
+	 * @return
+	 * if game is still going
+	 */
 	public synchronized boolean cycle() {
-		if(!list.contains(player) && player.getHP() > 0) list.add(player); //bandaid
-		if(sp.audioPos() >= sp.sze() || !list.contains(player)) {
+		if(!list.contains(player) && player.getHP() > 0) list.add(player); 	//bandaid for small bug encountered
+		if(sp.audioPos() >= sp.sze() || !list.contains(player)) {			//game ended, either by winning or losing
 			return false;
 		}
 		if(previousCycle == -1) previousCycle = System.currentTimeMillis()-1;
 		float f = (System.currentTimeMillis()-previousCycle)/1000.0f;
 		previousCycle=System.currentTimeMillis();
 		Vector<Entity> newlist = new Vector<Entity>();
-		for(Entity e: list) {
+		for(Entity e: list) {												//cycle every entity
 			boolean flag = e.cycle(f);
-			flag = flag && !(e instanceof Bullet && e.correctPos(height, width));
+			flag = flag && !(e instanceof Bullet && e.correctPos(height, width));	//if bullet has gone out of boundaries, remove it
 			if(flag) newlist.add(e);
 		}
 		sweeper.cycle(f); faucetarg += f;
@@ -65,6 +96,7 @@ public class Game {
 		
 		//add bullets
 		if(updateFlag) {
+			//interpret bassy audio
 			float[][] means = sp.bassAnalyze();
 			if(means != null) {
 				if(means[0][0] > (means[1][0]+means[2][0]+0.85)) {
@@ -77,6 +109,7 @@ public class Game {
 					addEntity(new Bullet(sweeper.pos(),Complex.polar(sweeper.vel().arg(), 250), 0));
 				}
 			}
+			//interpret high pitched audio
 			float cnt[][] = sp.trebleAnalyze();
 			if(cnt != null) {
 				float frac[][] = new float[cnt.length][2];
@@ -90,6 +123,7 @@ public class Game {
 					for(int i = 0; i < frac[0][0]/5; i++) addEntity(new Bullet(faucet.pos(), Complex.polar(Math.random()*Math.PI*2, 275), frac[0][0]>1.75?2:4));
 				}
 			}
+			//interpret audio in between
 			float[] hist = sp.fftget(1), cur = sp.fftget(0);
 			if(hist != null) {
 				for(int i = 1; i < cur.length; i++) {
@@ -103,6 +137,10 @@ public class Game {
 		}
 		return true;
 	}
+	/**
+	 * repaints the entire game
+	 * @param g Graphics used to paint
+	 */
 	public synchronized void repaint(Graphics g) {
 		if(!list.contains(player)) {
 			g.drawString("ded. ESC to return to menu", width/2, height/2);
