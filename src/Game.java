@@ -1,6 +1,9 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Transparency;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -178,7 +181,12 @@ public class Game {
 					g.drawLine(lg, height-(int)(data[i]-tmpdata[i])-50, lgp1, height-(int)(data[i+1]-tmpdata[i+1])-50);
 				}
 			} catch(NullPointerException e) {}
-			for(Entity e: list) e.repaint(g);
+			{
+				BufferedImage bim = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(width, height, Transparency.TRANSLUCENT);
+				Graphics g2 = bim.getGraphics();
+				for(Entity e: list) e.repaint(g2);
+				g.drawImage(bim, 0, 0, null);
+			}
 			faucet.repaint(g);
 			sweeper.repaint(g);
 		}

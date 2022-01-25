@@ -1,10 +1,10 @@
+absent		6457		01242022
+default		5350		01242022
+default		2927		01242022
+default		1949		01242022\
+default		1559		01242022
+default		1295		01242022
+default		1161		01242022
+default		968		01242022
+default		921		01242022
 default		771		01242022
-dorian		472		01262022
-maxwell li		60		01242025
-maxwell li		59		01242026
-maxwell li		58		01242026
-maxwell li		57		01242026
-maxwell li		56		01242026
-maxwell li		55		01242026
-maxwell li		54		01242026
-maxwell li		53		01242026
