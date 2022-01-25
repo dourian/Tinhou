@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -23,7 +25,8 @@ public class Game {
 	private long score;					//current score
 	private SoundProcessor sp;			//sound processing structure
 	private Image backgroundImage;		//background image
-	/**
+
+	/*
 	 * constructs game object
 	 * @param h height boundary
 	 * @param w width boundary
@@ -51,6 +54,10 @@ public class Game {
 			faucet = new BlackHole(new Complex(w/2,h/2)); faucetarg = 0;
 			sweeper = new BlackHole(new Complex(w/2, h/2));
 		} catch (IOException e) { e.printStackTrace(); }
+		
+//		images[0] = Toolkit.getDefaultToolkit().getImage("losescreen.png");
+//		images[1] = Toolkit.getDefaultToolkit().getImage("winscreen.png");
+		
 	}
 	/**
 	 * @return player
@@ -183,6 +190,7 @@ public class Game {
 			sweeper.repaint(g);
 		}
 		else {
+			g.drawImage(images[0], 0,0,null);
 			g.drawString("win. ESC to return to menu", width/2, height/2);
 			
 		}

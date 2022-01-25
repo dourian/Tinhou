@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
  * Jan 24, 2022
  * blackhole object. however, instead of gravitating objects, it spews them out. kinda like the opposite of a blackhole. oops. 
  */
+
 public class BlackHole extends Entity {
 	/**
 	 * initializes black hole
