@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -40,12 +41,6 @@ public class Game {
 		updateFlag = false; score = 0;
 		try {
 			backgroundImage = ImageIO.read(new File("background_scaled_1600_900.png"));
-			winscreen = ImageIO.read(new File("winscreen_v2.png"));
-			losescreen = ImageIO.read(new File("losescreen_v2.png"));
-			if(Math.random()<0.01)
-				winscreen = ImageIO.read(new File("winscreen.png"));
-			if(Math.random()<0.01)
-				losescreen = ImageIO.read(new File("losescreen.png"));
 			
 		} catch (IOException e1) { e1.printStackTrace(); }
 		height = h; width = w;
@@ -157,7 +152,17 @@ public class Game {
 	 */
 	public synchronized void repaint(Graphics g) {
 		if(!list.contains(player)) {
-			g.drawImage(losescreen, 0, 0, null);
+			try {
+				if(Math.random() < 0.99) {
+					g.drawImage(ImageIO.read(new File("losescreen_v2.png")), 0, 0, null);
+					g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
+					g.setColor(Color.WHITE);
+					g.drawString(Long.toString(getScore()), 511, 367);
+				}
+				else {
+					g.drawImage(ImageIO.read(new File("losescreen.png")), 0, 0, null);
+				}
+			} catch (IOException e) {e.printStackTrace();}
 			return;
 		}
 		int window = 4096;
@@ -202,8 +207,17 @@ public class Game {
 			sweeper.repaint(g);
 		}
 		else {
-			g.drawImage(winscreen, 0, 0, null);
-			
+			try {
+				if(Math.random() < 0.99) {
+					g.drawImage(ImageIO.read(new File("winscreen_v2.png")), 0, 0, null);
+					g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
+					g.setColor(Color.WHITE);
+					g.drawString(Long.toString(getScore()), 511, 367);
+				}
+				else {
+					g.drawImage(ImageIO.read(new File("winscreen.png")), 0, 0, null);
+				}
+			} catch (IOException e) {e.printStackTrace();}
 		}
 	}
 	public long getScore() {return score;}
