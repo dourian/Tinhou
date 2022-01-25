@@ -4,18 +4,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.BitSet;
-import java.util.Comparator;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-import java.util.Vector;
-
 import javax.swing.*;
+
+/*
+ * Dorian Chen Maxwell Li
+ * Jan. 24, 2022
+ * Main class for program. Handles scoring, page navigation, file selection, input selection.
+ */
 
 public class Main extends JPanel implements Runnable, MouseListener, KeyListener, MouseMotionListener {
 
+	//Initialize variables
 	Game game;
 	static JPanel panel;
 	static JFrame frame;
@@ -34,18 +37,23 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 	final int HOME=0, PLAY = 1, LEADERBOARD = 2, SETTINGSMOUSE = 3, PLAYBUTTON = 4, LEADERBUTTON = 5, SETTINGSBUTTON = 6, SETTINGSKEYBOARD = 7, NAMEANDDATE = 8;
 	static int gameState = 0;
 
+	//Main method
 	Main() throws FileNotFoundException {
 
+		//Sets a defult file name
 		if (fileName==null) {
 			fileName="keshi.wav";
 		}
+		
+		//Defalt input is mouse
 		usingMouse = true;
 
-
+		//Page navigation system
 		navigation = new Stack <Integer> ();
 		navigation.add(HOME);
 
-		images = new Image [20];
+		//Grabs all required images
+		images = new Image [10];
 		images[HOME] = Toolkit.getDefaultToolkit().getImage("openingscreen.png");
 		images[LEADERBOARD] = Toolkit.getDefaultToolkit().getImage("leaderboardscreen.png");
 		images[SETTINGSMOUSE] = Toolkit.getDefaultToolkit().getImage("settingsscreenmouse.png");
@@ -55,18 +63,34 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		images[SETTINGSKEYBOARD] = Toolkit.getDefaultToolkit().getImage("settingsscreenkeyboard.png");
 		images[NAMEANDDATE] = Toolkit.getDefaultToolkit().getImage("highscore.png");
 
+		//Adds mouse, motion, and keylisteners
 		addMouseListener (this);
 		frame.addKeyListener (this);
 		addMouseMotionListener(this);
+		
+		//Initializes the score
 		score.create();
-		//		for (score s: score.ts)System.out.println(s);
 	}
 
+	/**
+	 * Purpose: Clears a specified location
+	 * @param  	g Graphics used to paint
+	 * @param 	x Integer of x coordinate
+	 * @param 	y Integer of y coordinate
+	 * @param 	w Integer of width
+	 * @param 	h Integer of height
+	 * @return 	void
+	 */
 	public static void clearBoard(Graphics g, int x, int y, int w, int h) {
 		g.setColor(Color.WHITE);
 		g.fillRect(x, y, w, h);
 	}
 
+	/**
+	 * Purpose: Paint component that will update screens based on game state
+	 * @param 	g Graphics used to paint
+	 * @return 	void
+	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
@@ -77,7 +101,6 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		}
 
 		if (gameState!=PLAY) {
-			//			System.out.println(gameState);
 			update(g, gameState);
 		}
 		else {
@@ -85,6 +108,9 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		}
 	}
 
+	/**
+	 * Purpose:	Sets up the Jframe and Jpanel
+	 */
 	public static void main(String args[]) throws FileNotFoundException {
 		frame = new JFrame ();
 		frame.setPreferredSize(new Dimension(1014, 738));
@@ -96,6 +122,12 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
+	/**
+	 * Purpose: Updates the the graphics displayed
+	 * @param  	g Graphics used to paint
+	 * @param 	state Integer representing the current game state
+	 * @return 	void
+	 */
 	public void update(Graphics g, int state) {
 		if (offScreenBuffer == null)
 		{
@@ -127,6 +159,13 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		}
 
 	}
+	
+	/**
+	 * Purpose: Updates the buttons on the screen when hovered on
+	 * @param  	g Graphics used to paint
+	 * @param 	state Integer representing current game state
+	 * @return 	void
+	 */
 	public void updateButton(Graphics g, int state) {
 		if (state==PLAYBUTTON) {
 			g.drawImage(images[PLAYBUTTON], 0,0,1000,700, this);
@@ -143,6 +182,11 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 
 	}
 
+	/**
+	 * Purpose:	Displays the leaderboard rankings
+	 * @param  	g Graphics used to paint
+	 * @return 	void
+	 */
 	public void displayLeaderboard(Graphics g) {
 		int y = 200;
 		g.setFont(new Font("Courier", Font.PLAIN, 20));
@@ -153,6 +197,12 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		}
 	}
 
+	/**
+	 * Purpose: Tracks the button clicked
+	 * @param  	x Integer representing x coordinate
+	 * @param 	y Integer representing y coordinate
+	 * @return 	Integer representing button clicked
+	 */
 	public int buttonTracker(int x, int y) {
 		if (gameState == HOME) {
 			if (x>300 && x<700) {
@@ -183,6 +233,9 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		return -1;
 	}
 
+	/*
+	 * Starts the thread, and plays the game
+	 */
 	@Override
 	public void run(){
 		removeMouseListener(this);
@@ -209,7 +262,11 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		addMouseMotionListener(this);
 	}
 
-
+	/**
+	 * Purpose:	Handle mouse clicks
+	 * @param  	e MouseEvent
+	 * @return 	void
+	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (buttonTracker(e.getX(), e.getY())==PLAY) {
@@ -240,10 +297,11 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		}
 	}
 
-	public void mousePressed(MouseEvent e) { }
-	public void mouseReleased(MouseEvent e) { }
-	public void mouseEntered(MouseEvent e) { }
-	public void mouseExited(MouseEvent e) { }
+	/**
+	 * Purpose:	Handles mouse movement
+	 * @param  	e MouseEvent
+	 * @return 	void
+	 */
 	public void mouseMoved(MouseEvent e) {
 		if (gameState==HOME) {
 			if (buttonTracker(e.getX(), e.getY())==PLAY && paintedbutton!=PLAY) {
@@ -264,7 +322,15 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			}
 		}
 	}
+	
+	/**
+	 * Purpose: Handles key strokes
+	 * @param  	e KeyEvent
+	 * @return 	void
+	 */
 	public void keyTyped(KeyEvent e) {
+		
+		//Entering file name
 		if (gameState == SETTINGSMOUSE || gameState ==SETTINGSKEYBOARD) {
 			if(e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && e.getKeyChar() != KeyEvent.VK_ESCAPE) {
 				if (e.getKeyChar()==KeyEvent.VK_BACK_SPACE && fileName.length() > 0)fileName = fileName.substring(0, fileName.length()-1);
@@ -278,6 +344,8 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			}
 			update(getGraphics());
 		}
+		
+		//Entering name + date for highscore
 		else if (gameState == NAMEANDDATE) {
 			if(e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && e.getKeyChar() != KeyEvent.VK_ESCAPE && field==1) {
 				if (e.getKeyChar()==KeyEvent.VK_BACK_SPACE && name.length() > 0)name = name.substring(0, name.length()-1);
@@ -307,10 +375,16 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 			update(getGraphics());
 		}
 	}
-	public void keyPressed(KeyEvent e) { }
 
+	/**
+	 * Purpose: Handles the release of keys
+	 * @param  	e KeyEvent
+	 * @return 	void
+	 */
 	@Override
 	public void keyReleased(KeyEvent e) {
+		
+		//Goes back to home screen
 		if (e.getKeyCode()==KeyEvent.VK_ESCAPE && gameState!=PLAY && gameState!=NAMEANDDATE) {
 			while (navigation.size()> 1) {
 				navigation.pop();
@@ -318,6 +392,8 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 				repaint();
 			}
 		}
+		
+		//Goes to highscore after game is won or lost
 		else if (e.getKeyCode()==KeyEvent.VK_ESCAPE && gameState == PLAY) {
 			while (navigation.size()>1) {
 				navigation.pop();
@@ -328,33 +404,47 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 		}
 	}
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
+	//Unused methods
+	public void keyPressed(KeyEvent e) { }
+	public void mouseDragged(MouseEvent e) { }
+	public void mousePressed(MouseEvent e) { }
+	public void mouseReleased(MouseEvent e) { }
+	public void mouseEntered(MouseEvent e) { }
+	public void mouseExited(MouseEvent e) { }
 }
 
-class score implements Comparable {
 
+class score implements Comparable {
+	
+	/*
+	 *	Class for a score object
+	 *	Stores all the information needed for the highscore
+	 */
+
+	//Class variables
 	public static TreeSet <score> ts = new TreeSet();
 	private static String filename="leaderboard.txt";
-
+	
+	//Instance variables
 	private String name;
 	private String date;
 	private int scorevalue;
 
+	//Constructor
 	score(String inname, int inscore, String indate) throws FileNotFoundException{
 		name = inname;
 		scorevalue = inscore;
 		date = indate;
 	}
 
+	//Class method to add entries
 	public static void addentry(String inname, int inscore, String indate) throws FileNotFoundException {
 		ts.add(new score (inname, inscore, indate));
 		refreshText();
 		create();
 	}
+	
+	//Class method to create the scores
 	public static void create() throws FileNotFoundException {
 		Scanner in = new Scanner (new File("leaderboard.txt"));
 		score.ts.clear();
@@ -367,6 +457,8 @@ class score implements Comparable {
 		in.close();
 		refreshText();
 	}
+	
+	//Class method to refresh text
 	public static void refreshText () throws FileNotFoundException {
 		PrintWriter out = new PrintWriter("leaderboard.txt");
 		int count=1;
@@ -377,10 +469,14 @@ class score implements Comparable {
 		}
 		out.close();
 	}
+	
+	//toString method
 	public String toString() {
 		return String.format("%s\t\t%d\t\t%s", name, scorevalue, date);
 	}
+	
 	@Override
+	//CompareTo for sorting
 	public int compareTo(Object o) {
 		score myScore = (score)o;
 
@@ -390,12 +486,17 @@ class score implements Comparable {
 		return myScore.scorevalue - this.scorevalue;
 	}
 
+	//Returns name
 	public String getName() {
 		return name;
 	}
+	
+	//Returns score
 	public int getScore() {
 		return scorevalue;
 	}
+	
+	//Returns date
 	public String getDate() {
 		return date;
 	}
