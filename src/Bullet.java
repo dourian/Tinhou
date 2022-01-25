@@ -18,7 +18,7 @@ public class Bullet extends Entity {
 		radii = new double[6];
 		for(int i = 0; i < 6; i++) {
 			try {
-				icons[i] = ImageIO.read(new File("resources/bullet" + (i+1) + ".png")); //static constructor that initializes icons and radii
+				icons[i] = ImageIO.read(Bullet.class.getResourceAsStream("resources/bullet" + (i+1) + ".png")); //static constructor that initializes icons and radii
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

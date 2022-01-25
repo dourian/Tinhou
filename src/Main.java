@@ -3,11 +3,14 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /*
@@ -54,14 +57,18 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 
 		//Grabs all required images
 		images = new Image [10];
-		images[HOME] = Toolkit.getDefaultToolkit().getImage("resources/opening screen.png");
-		images[LEADERBOARD] = Toolkit.getDefaultToolkit().getImage("resources/leaderboardscreen.png");
-		images[SETTINGSMOUSE] = Toolkit.getDefaultToolkit().getImage("resources/settingsscreenmouse.png");
-		images[PLAYBUTTON] = Toolkit.getDefaultToolkit().getImage("resources/playbuttondark.png");
-		images[LEADERBUTTON] = Toolkit.getDefaultToolkit().getImage("resources/leaderboardbuttondark.png");
-		images[SETTINGSBUTTON] = Toolkit.getDefaultToolkit().getImage("resources/settingsbuttondark.png");
-		images[SETTINGSKEYBOARD] = Toolkit.getDefaultToolkit().getImage("resources/settingsscreenkeyboard.png");
-		images[NAMEANDDATE] = Toolkit.getDefaultToolkit().getImage("resources/highscore.png");
+		try {
+			images[HOME] = ImageIO.read(getClass().getResourceAsStream("resources/opening screen.png"));
+			images[LEADERBOARD] = ImageIO.read(getClass().getResourceAsStream("resources/leaderboardscreen.png"));
+			images[SETTINGSMOUSE] = ImageIO.read(getClass().getResourceAsStream("resources/settingsscreenmouse.png"));
+			images[PLAYBUTTON] = ImageIO.read(getClass().getResourceAsStream("resources/playbuttondark.png"));
+			images[LEADERBUTTON] = ImageIO.read(getClass().getResourceAsStream("resources/leaderboardbuttondark.png"));
+			images[SETTINGSBUTTON] = ImageIO.read(getClass().getResourceAsStream("resources/settingsbuttondark.png"));
+			images[SETTINGSKEYBOARD] = ImageIO.read(getClass().getResourceAsStream("resources/settingsscreenkeyboard.png"));
+			images[NAMEANDDATE] = ImageIO.read(getClass().getResourceAsStream("resources/highscore.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		//Adds mouse, motion, and keylisteners
 		addMouseListener (this);
