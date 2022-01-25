@@ -40,7 +40,7 @@ public class Game {
 	Game(int h, int w, boolean mouse, String file) {
 		updateFlag = false; score = 0;
 		try {
-			backgroundImage = ImageIO.read(new File("background_scaled_1600_900.png"));
+			backgroundImage = ImageIO.read(new File("resources/background_scaled_1600_900.png"));
 			
 		} catch (IOException e1) { e1.printStackTrace(); }
 		height = h; width = w;
@@ -154,13 +154,13 @@ public class Game {
 		if(!list.contains(player)) {
 			try {
 				if(Math.random() < 0.99) {
-					g.drawImage(ImageIO.read(new File("losescreen_v2.png")), 0, 0, null);
+					g.drawImage(ImageIO.read(new File("resources/losescreen_v2.png")), 0, 0, null);
 					g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
 					g.setColor(Color.WHITE);
 					g.drawString(Long.toString(getScore()), 511, 367);
 				}
 				else {
-					g.drawImage(ImageIO.read(new File("losescreen.png")), 0, 0, null);
+					g.drawImage(ImageIO.read(new File("resources/losescreen.png")), 0, 0, null);
 				}
 			} catch (IOException e) {e.printStackTrace();}
 			return;
@@ -209,13 +209,13 @@ public class Game {
 		else {
 			try {
 				if(Math.random() < 0.99) {
-					g.drawImage(ImageIO.read(new File("winscreen_v2.png")), 0, 0, null);
+					g.drawImage(ImageIO.read(new File("resources/winscreen_v2.png")), 0, 0, null);
 					g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
 					g.setColor(Color.WHITE);
 					g.drawString(Long.toString(getScore()), 511, 367);
 				}
 				else {
-					g.drawImage(ImageIO.read(new File("winscreen.png")), 0, 0, null);
+					g.drawImage(ImageIO.read(new File("resources/winscreen.png")), 0, 0, null);
 				}
 			} catch (IOException e) {e.printStackTrace();}
 		}

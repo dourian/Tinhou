@@ -54,14 +54,14 @@ public class Main extends JPanel implements Runnable, MouseListener, KeyListener
 
 		//Grabs all required images
 		images = new Image [10];
-		images[HOME] = Toolkit.getDefaultToolkit().getImage("openingscreen.png");
-		images[LEADERBOARD] = Toolkit.getDefaultToolkit().getImage("leaderboardscreen.png");
-		images[SETTINGSMOUSE] = Toolkit.getDefaultToolkit().getImage("settingsscreenmouse.png");
-		images[PLAYBUTTON] = Toolkit.getDefaultToolkit().getImage("playbuttondark.png");
-		images[LEADERBUTTON] = Toolkit.getDefaultToolkit().getImage("leaderboardbuttondark.png");
-		images[SETTINGSBUTTON] = Toolkit.getDefaultToolkit().getImage("settingsbuttondark.png");
-		images[SETTINGSKEYBOARD] = Toolkit.getDefaultToolkit().getImage("settingsscreenkeyboard.png");
-		images[NAMEANDDATE] = Toolkit.getDefaultToolkit().getImage("highscore.png");
+		images[HOME] = Toolkit.getDefaultToolkit().getImage("resources/opening screen.png");
+		images[LEADERBOARD] = Toolkit.getDefaultToolkit().getImage("resources/leaderboardscreen.png");
+		images[SETTINGSMOUSE] = Toolkit.getDefaultToolkit().getImage("resources/settingsscreenmouse.png");
+		images[PLAYBUTTON] = Toolkit.getDefaultToolkit().getImage("resources/playbuttondark.png");
+		images[LEADERBUTTON] = Toolkit.getDefaultToolkit().getImage("resources/leaderboardbuttondark.png");
+		images[SETTINGSBUTTON] = Toolkit.getDefaultToolkit().getImage("resources/settingsbuttondark.png");
+		images[SETTINGSKEYBOARD] = Toolkit.getDefaultToolkit().getImage("resources/settingsscreenkeyboard.png");
+		images[NAMEANDDATE] = Toolkit.getDefaultToolkit().getImage("resources/highscore.png");
 
 		//Adds mouse, motion, and keylisteners
 		addMouseListener (this);

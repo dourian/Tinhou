@@ -19,7 +19,7 @@ public abstract class Player extends Entity {
 	 * @throws IOException if there was an issue reading icon data
 	 */
 	Player(Complex position) throws IOException {
-		super(position, new Complex(0, 0), 5, ImageIO.read(new File("player_v2.png")));
+		super(position, new Complex(0, 0), 5, ImageIO.read(new File("resources/player_v2.png")));
 		HP = 1; speed = 300;
 	}
 	/**

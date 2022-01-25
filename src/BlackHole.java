@@ -17,7 +17,7 @@ public class BlackHole extends Entity {
 	 * @throws IOException throws if error with reading icon
 	 */
 	BlackHole(Complex position) throws IOException {
-		super(position, new Complex(0, 0), 15, ImageIO.read(new File("blackhole.png")));
+		super(position, new Complex(0, 0), 15, ImageIO.read(new File("resources/blackhole.png")));
 	}
 	/**
 	 * generic cycle from entity superclass. not much to say. ooh, it advances the position by velocity!!! velocity has to be multiplied by f first otherwise the cycling is inconsistent!!!
