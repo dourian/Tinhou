@@ -5,7 +5,7 @@ import java.io.*;
 import javax.imageio.ImageIO;
 
 /**
- * @author maxwell
+ * @author Dorian, maxwell
  * Jan 24, 2022
  * bullet class. stores bullet data.
  */

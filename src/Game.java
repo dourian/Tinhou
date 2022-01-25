@@ -12,7 +12,7 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 /**
- * @author maxwell
+ * @author Dorian, maxwell
  * Jan 24, 2022
  * game class that contains all game logic
  */
@@ -30,7 +30,7 @@ public class Game {
 	private Image backgroundImage;		//background image
 	private Image winscreen, losescreen;//win/lose
 	
-	/*
+	/**
 	 * constructs game object
 	 * @param h height boundary
 	 * @param w width boundary

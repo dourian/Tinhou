@@ -1,6 +1,6 @@
 import java.util.Objects;
 /**
- * @author max13
+ * @author Dorian, maxwell
  * basic complex number that supports arithmetic operations. 
  * immutable. 
  */

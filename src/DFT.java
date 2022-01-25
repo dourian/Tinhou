@@ -1,6 +1,6 @@
 
 /**
- * @author max13
+ * @author Dorian, maxwell
  * class that computes the discrete Fourier transform of a sequence of numbers.
  * uses formula found here: https://brilliant.org/wiki/discrete-fourier-transform/
  */
