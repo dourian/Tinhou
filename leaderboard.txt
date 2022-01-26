@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 absent		6457		01242022
 default		5350		01242022
 default		2927		01242022
@@ -8,3 +9,15 @@ mwli		1938		01242022
 default		1559		01242022
 default		1295		01242022
 a		1245		01242022
+=======
+maxwell		6457		01242022
+dorian		5350		01242022
+sabrina		2927		01242022
+andy		2324		01242022
+daniel		1949		01242022
+samuwuel		1559		01242022
+sky		1295		01242022
+max		1161		01242022
+jonathan		968		01242022
+ms.wong		921		01242022
+>>>>>>> Stashed changes

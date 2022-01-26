@@ -3,7 +3,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.Stack;
@@ -13,9 +12,9 @@ import java.util.TreeSet;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-/*
- * Dorian Chen Maxwell Li
- * Jan. 24, 2022
+/**
+ * @author Dorian, maxwell
+ * Jan 24, 2022
  * Main class for program. Handles scoring, page navigation, file selection, input selection.
  */
 
